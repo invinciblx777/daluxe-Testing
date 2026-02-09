@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Luxe Beauty - Admin Dashboard</title>
+    <link rel="stylesheet" href="admin-styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+        </div>
+        
+        <nav class="sidebar-nav">
+            <ul class="nav-list">
+                <!-- OVERVIEW -->
+                <li class="nav-category">OVERVIEW</li>
+                <li><a href="#dashboard" class="nav-link" data-page="dashboard">
+                    <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                    Dashboard
+                </a></li>
+                
+                <!-- COMMERCE -->
+                <li class="nav-category">COMMERCE</li>
+                <li><a href="#products" class="nav-link" data-page="products">
+                    <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+                    Products
+                </a></li>
+                <li><a href="#categories" class="nav-link" data-page="categories">
+                    <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                    Categories
+                </a></li>
+                <li><a href="#orders" class="nav-link" data-page="orders">
+                    <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                    Orders
+                </a></li>
+                <li><a href="#payments" class="nav-link" data-page="payments">
+                    <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+                    Payments
+                </a></li>
+                
+                <!-- CUSTOMERS -->
+                <li class="nav-category">CUSTOMERS</li>
+                <li><a href="#customers" class="nav-link" data-page="customers">
+                    <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    Customers
+                </a></li>
+                <li><a href="#messages" class="nav-link" data-page="messages">
+                    <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                    Messages
+                </a></li>
+                
+                <!-- MARKETING -->
+                <li class="nav-category">MARKETING</li>
+                <li><a href="#ads" class="nav-link" data-page="ads">
+                    <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                    Ad Banners
+                </a></li>
+                <li><a href="#offers" class="nav-link" data-page="offers">
+                    <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 12v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h6"/><path d="M9 12l6-6"/><path d="M15 6h6v6"/></svg>
+                    Offers & Bundles
+                </a></li>
+                <li><a href="#coupons" class="nav-link" data-page="coupons">
+                    <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12c0 1.66-1.34 3-3 3H6c-1.66 0-3-1.34-3-3s1.34-3 3-3h12c1.66 0 3 1.34 3 3z"/><path d="M7 12h.01M17 12h.01"/></svg>
+                    Coupons
+                </a></li>
+                
+                <!-- SETTINGS -->
+                <li class="nav-category">SETTINGS</li>
+                <li><a href="#settings" class="nav-link" data-page="settings">
+                    <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v6m0 6v6m5.66-13.66l-4.24 4.24m0 6l-4.24 4.24M23 12h-6m-6 0H1m18.66 5.66l-4.24-4.24m0-6l-4.24-4.24"/></svg>
+                    Settings
+                </a></li>
+            </ul>
+        </nav>
+        
+        <div class="sidebar-footer">
+            <div class="user-profile">
+                <div class="user-avatar">A</div>
+                <div class="user-info">
+                    <div class="user-name">Admin User</div>
+                    <div class="user-role">Super Admin</div>
+                </div>
+            </div>
+            <div class="version-info">
+                <div class="version-text">Version 1.0.0</div>
+                <div class="edition-text">Premium Edition</div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Header -->
+        <header class="admin-header">
+            <div class="header-logo">
+                <img src="logo.png" alt="DALUXE" style="width: 36px; height: 36px;">
+                <span class="header-logo-text">DALUXE</span>
+            </div>
+            
+            <div class="header-actions">
+                <button class="header-btn theme-btn" id="themeToggle">
+                    <svg class="theme-icon-dark" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+                    <svg class="theme-icon-light" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: none;"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+                </button>
+                <div class="user-menu">
+                    <button class="user-menu-btn">
+                        <div class="user-avatar-small">A</div>
+                        <span>Admin</span>
+                    </button>
+                </div>
+                <button class="header-btn logout-btn" id="logoutBtn" title="Logout">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                </button>
+            </div>
+        </header>
+        
+        <!-- Dashboard Content -->
+        <main class="dashboard-content">
+            <div class="dashboard-header">
+                <div>
+                    <h1 class="page-title">Dashboard</h1>
+                    <p class="page-subtitle">Welcome back! Here's what's happening with your store today.</p>
+                </div>
+                <div class="last-updated">
+                    <p class="update-label">Last updated</p>
+                    <p class="update-time" id="lastUpdated"></p>
+                </div>
+            </div>
+            
+            <!-- KPI Cards -->
+            <div class="kpi-grid">
+                <div class="kpi-card gold">
+                    <div class="kpi-header">
+                        <svg class="kpi-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                        <span class="kpi-title">Total Revenue</span>
+                    </div>
+                    <div class="kpi-value">₹24.5L</div>
+                    <div class="kpi-change positive">
+                        <span class="change-arrow">↑</span>
+                        <span>12.5% vs last month</span>
+                    </div>
+                </div>
+                
+                <div class="kpi-card">
+                    <div class="kpi-header">
+                        <svg class="kpi-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                        <span class="kpi-title">Total Orders</span>
+                    </div>
+                    <div class="kpi-value">1,248</div>
+                    <div class="kpi-change positive">
+                        <span class="change-arrow">↑</span>
+                        <span>8.2% vs last month</span>
+                    </div>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-header">
+                        <svg class="kpi-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                        <span class="kpi-title">Conversion Rate</span>
+                    </div>
+                    <div class="kpi-value">3.24%</div>
+                    <div class="kpi-change negative">
+                        <span class="change-arrow">↓</span>
+                        <span>2.1% vs last month</span>
+                    </div>
+                </div>
+                
+                <div class="kpi-card">
+                    <div class="kpi-header">
+                        <svg class="kpi-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+                        <span class="kpi-title">Avg Order Value</span>
+                    </div>
+                    <div class="kpi-value">₹3,890</div>
+                    <div class="kpi-change positive">
+                        <span class="change-arrow">↑</span>
+                        <span>5.7% vs last month</span>
+                    </div>
+                </div>
+                
+                <div class="kpi-card">
+                    <div class="kpi-header">
+                        <svg class="kpi-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                        <span class="kpi-title">Active Users</span>
+                    </div>
+                    <div class="kpi-value">12.4K</div>
+                    <div class="kpi-change positive">
+                        <span class="change-arrow">↑</span>
+                        <span>18.3% vs last month</span>
+                    </div>
+                </div>
+                
+                <div class="kpi-card gold">
+                    <div class="kpi-header">
+                        <svg class="kpi-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+                        <span class="kpi-title">Returning Rate</span>
+                    </div>
+                    <div class="kpi-value">42.8%</div>
+                    <div class="kpi-change positive">
+                        <span class="change-arrow">↑</span>
+                        <span>6.4% vs last month</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts and Quick Actions -->
+            <div class="charts-row">
+                <div class="chart-card sales-chart">
+                    <div class="card-header">
+                        <h3 class="card-title">Sales Overview</h3>
+                        <select class="period-select">
+                            <option>Last 7 days</option>
+                            <option>Last 30 days</option>
+                            <option>Last 90 days</option>
+                        </select>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="salesChart"></canvas>
+                    </div>
+                </div>
+                
+                <div class="quick-actions-card">
+                    <h3 class="card-title">Quick Actions</h3>
+                    <div class="quick-actions-grid">
+                        <button class="quick-action-btn">
+                            <svg class="action-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                            <span>Add Product</span>
+                        </button>
+                        <button class="quick-action-btn">
+                            <svg class="action-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                            <span>View Orders</span>
+                        </button>
+                        <button class="quick-action-btn">
+                            <svg class="action-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                            <span>Customers</span>
+                        </button>
+                        <button class="quick-action-btn">
+                            <svg class="action-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                            <span>Analytics</span>
+                        </button>
+                        <button class="quick-action-btn">
+                            <svg class="action-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 12v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h6"/><path d="M9 12l6-6"/><path d="M15 6h6v6"/></svg>
+                            <span>Offers</span>
+                        </button>
+                        <button class="quick-action-btn">
+                            <svg class="action-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v6m0 6v6m5.66-13.66l-4.24 4.24m0 6l-4.24 4.24M23 12h-6m-6 0H1m18.66 5.66l-4.24-4.24m0-6l-4.24-4.24"/></svg>
+                            <span>Settings</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Products and Alerts -->
+            <div class="products-alerts-row">
+                <div class="top-products-card">
+                    <h3 class="card-title">Top Products</h3>
+                    <div class="products-list">
+                        <div class="product-item">
+                            <div class="product-info">
+                                <div class="product-image"></div>
+                                <div>
+                                    <div class="product-name">Gold Radiance Serum</div>
+                                    <div class="product-sales">248 sales</div>
+                                </div>
+                            </div>
+                            <div class="product-revenue">₹98,400</div>
+                        </div>
+                        <div class="product-item">
+                            <div class="product-info">
+                                <div class="product-image"></div>
+                                <div>
+                                    <div class="product-name">Luxury Night Cream</div>
+                                    <div class="product-sales">186 sales</div>
+                                </div>
+                            </div>
+                            <div class="product-revenue">₹74,400</div>
+                        </div>
+                        <div class="product-item">
+                            <div class="product-info">
+                                <div class="product-image"></div>
+                                <div>
+                                    <div class="product-name">Hydrating Face Mask</div>
+                                    <div class="product-sales">142 sales</div>
+                                </div>
+                            </div>
+                            <div class="product-revenue">₹56,800</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="stock-alerts-card">
+                    <h3 class="card-title">Stock Alerts</h3>
+                    <div class="alerts-list">
+                        <div class="alert-item critical">
+                            <svg class="alert-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                            <div class="alert-content">
+                                <div class="alert-product">Gold Serum</div>
+                                <div class="alert-stock">Only 5 units left</div>
+                            </div>
+                        </div>
+                        <div class="alert-item warning">
+                            <svg class="alert-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                            <div class="alert-content">
+                                <div class="alert-product">Night Cream</div>
+                                <div class="alert-stock">12 units remaining</div>
+                            </div>
+                        </div>
+                        <div class="alert-item warning">
+                            <svg class="alert-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                            <div class="alert-content">
+                                <div class="alert-product">Face Mask</div>
+                                <div class="alert-stock">18 units remaining</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Orders -->
+            <div class="recent-orders-card">
+                <div class="card-header">
+                    <h3 class="card-title">Recent Orders</h3>
+                    <button class="view-all-btn">View All</button>
+                </div>
+                <div class="orders-table-container">
+                    <table class="orders-table">
+                        <thead>
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Customer</th>
+                                <th>Product</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>#ORD-1248</td>
+                                <td>Priya Sharma</td>
+                                <td>Gold Radiance Serum</td>
+                                <td>₹4,599</td>
+                                <td><span class="status-badge completed">Completed</span></td>
+                                <td>Jan 15, 2026</td>
+                            </tr>
+                            <tr>
+                                <td>#ORD-1247</td>
+                                <td>Rahul Verma</td>
+                                <td>Luxury Night Cream</td>
+                                <td>₹3,299</td>
+                                <td><span class="status-badge processing">Processing</span></td>
+                                <td>Jan 15, 2026</td>
+                            </tr>
+                            <tr>
+                                <td>#ORD-1246</td>
+                                <td>Anita Desai</td>
+                                <td>Hydrating Face Mask</td>
+                                <td>₹2,899</td>
+                                <td><span class="status-badge completed">Completed</span></td>
+                                <td>Jan 14, 2026</td>
+                            </tr>
+                            <tr>
+                                <td>#ORD-1245</td>
+                                <td>Vikram Singh</td>
+                                <td>Anti-Aging Cream</td>
+                                <td>₹5,499</td>
+                                <td><span class="status-badge pending">Pending</span></td>
+                                <td>Jan 14, 2026</td>
+                            </tr>
+                            <tr>
+                                <td>#ORD-1244</td>
+                                <td>Meera Patel</td>
+                                <td>Vitamin C Serum</td>
+                                <td>₹3,899</td>
+                                <td><span class="status-badge completed">Completed</span></td>
+                                <td>Jan 14, 2026</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <script src="admin-pages.js"></script>
+    <script src="dashboard-data.js"></script>
+    <script src="products-page.js"></script>
+    <script src="categories-page.js"></script>
+    <script src="orders-page.js"></script>
+    <script src="payments-page.js"></script>
+    <script src="customers-page.js"></script>
+    <script src="messages-page.js"></script>
+    <script src="ads-page.js"></script>
+    <script src="offers-page.js"></script>
+    <script src="coupons-page.js"></script>
+    <script src="admin-app.js"></script>
+</body>
+</html>

@@ -1,0 +1,29 @@
+{
+  "name": "virgin-5.0-skincare",
+  "version": "1.0.0",
+  "description": "Virgin 5.0 - Luxury Ayurvedic Skincare E-commerce Website",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": [
+    "skincare",
+    "ayurveda",
+    "e-commerce",
+    "luxury",
+    "beauty"
+  ],
+  "author": "Glacier Studios",
+  "license": "MIT",
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "dependencies": {
+    "body-parser": "^2.2.2",
+    "cors": "^2.8.5",
+    "express": "^5.2.1",
+    "multer": "^2.0.2",
+    "mysql2": "^3.16.0",
+    "node-fetch": "^3.3.2"
+  }
+}

@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - Luxe Beauty</title>
+    <link rel="stylesheet" href="checkout-styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="checkout-container">
+        <!-- Header -->
+        <header class="checkout-header">
+            <div class="logo">
+                <img src="logo.png" alt="Luxe Beauty" style="height: 40px;">
+            </div>
+            <div class="checkout-steps">
+                <div class="step active" data-step="1">
+                    <span class="step-number">1</span>
+                    <span class="step-label">Cart</span>
+                </div>
+                <div class="step-line"></div>
+                <div class="step" data-step="2">
+                    <span class="step-number">2</span>
+                    <span class="step-label">Delivery</span>
+                </div>
+                <div class="step-line"></div>
+                <div class="step" data-step="3">
+                    <span class="step-number">3</span>
+                    <span class="step-label">Payment</span>
+                </div>
+                <div class="step-line"></div>
+                <div class="step" data-step="4">
+                    <span class="step-number">4</span>
+                    <span class="step-label">Confirmation</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="checkout-main">
+            <!-- Step 1: Cart Review -->
+            <div class="checkout-step" id="step-cart">
+                <h2 class="step-title">Review Your Cart</h2>
+                <div class="cart-review" id="cartReview"></div>
+                <button class="checkout-btn" onclick="goToStep(2)">Proceed to Delivery Details</button>
+            </div>
+
+            <!-- Step 2: Delivery Details -->
+            <div class="checkout-step hidden" id="step-delivery">
+                <h2 class="step-title">Delivery Details</h2>
+                <form id="deliveryForm" class="delivery-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Full Name *</label>
+                            <input type="text" name="fullName" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Mobile Number *</label>
+                            <input type="tel" name="mobile" pattern="[0-9]{10}" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Email (Optional)</label>
+                        <input type="email" name="email">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>House / Flat / Building *</label>
+                        <input type="text" name="house" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Street / Area *</label>
+                        <input type="text" name="street" required>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>City *</label>
+                            <input type="text" name="city" required>
+                        </div>
+                        <div class="form-group">
+                            <label>State *</label>
+                            <input type="text" name="state" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Pincode / ZIP *</label>
+                            <input type="text" name="pincode" pattern="[0-9]{6}" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Landmark (Optional)</label>
+                            <input type="text" name="landmark">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group checkbox-group">
+                        <label>
+                            <input type="checkbox" name="sameBilling" checked>
+                            Billing address same as delivery address
+                        </label>
+                    </div>
+                    
+                    <button type="submit" class="checkout-btn">Continue to Payment</button>
+                </form>
+            </div>
+
+            <!-- Step 3: Payment -->
+            <div class="checkout-step hidden" id="step-payment">
+                <h2 class="step-title">Payment Method</h2>
+                <div class="payment-methods">
+                    <label class="payment-option">
+                        <input type="radio" name="payment" value="card" checked>
+                        <div class="payment-card">
+                            <span class="payment-icon">💳</span>
+                            <span>Credit / Debit Card</span>
+                        </div>
+                    </label>
+                    
+                    <label class="payment-option">
+                        <input type="radio" name="payment" value="upi">
+                        <div class="payment-card">
+                            <span class="payment-icon">📱</span>
+                            <span>UPI (GPay, PhonePe, Paytm)</span>
+                        </div>
+                    </label>
+                    
+                    <label class="payment-option">
+                        <input type="radio" name="payment" value="cod">
+                        <div class="payment-card">
+                            <span class="payment-icon">💰</span>
+                            <span>Cash on Delivery</span>
+                        </div>
+                    </label>
+                    
+                    <label class="payment-option">
+                        <input type="radio" name="payment" value="netbanking">
+                        <div class="payment-card">
+                            <span class="payment-icon">🏦</span>
+                            <span>Net Banking</span>
+                        </div>
+                    </label>
+                </div>
+                
+                <div id="paymentDetails" class="payment-details"></div>
+                
+                <div class="secure-payment">
+                    <span>🔒 Secure Payment</span>
+                    <span>Your payment information is encrypted and secure</span>
+                </div>
+                
+                <button class="checkout-btn" onclick="placeOrder()">Place Order</button>
+            </div>
+
+            <!-- Step 4: Confirmation -->
+            <div class="checkout-step hidden" id="step-confirmation">
+                <div class="confirmation-success">
+                    <div class="success-icon">✅</div>
+                    <h2>Order Placed Successfully!</h2>
+                    <p class="order-id">Order ID: <strong id="confirmOrderId"></strong></p>
+                    
+                    <div class="confirmation-details">
+                        <div class="detail-row">
+                            <span>Delivery Address:</span>
+                            <span id="confirmAddress"></span>
+                        </div>
+                        <div class="detail-row">
+                            <span>Payment Method:</span>
+                            <span id="confirmPayment"></span>
+                        </div>
+                        <div class="detail-row">
+                            <span>Expected Delivery:</span>
+                            <span id="confirmDelivery"></span>
+                        </div>
+                        <div class="detail-row">
+                            <span>Total Amount:</span>
+                            <span id="confirmTotal"></span>
+                        </div>
+                    </div>
+                    
+                    <p class="confirmation-message">📩 Order details sent to your SMS / Email</p>
+                    
+                    <div class="confirmation-actions">
+                        <button class="checkout-btn" onclick="window.location.href='/'">Continue Shopping</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Order Summary Sidebar -->
+        <aside class="order-summary">
+            <h3>Order Summary</h3>
+            <div class="summary-items" id="summaryItems"></div>
+            
+            <div class="summary-breakdown">
+                <div class="summary-row">
+                    <span>Items Total</span>
+                    <span id="summarySubtotal">₹0</span>
+                </div>
+                <div class="summary-row">
+                    <span>Delivery Charges</span>
+                    <span id="summaryDelivery">₹0</span>
+                </div>
+                <div class="summary-row">
+                    <span>Tax (GST 18%)</span>
+                    <span id="summaryTax">₹0</span>
+                </div>
+                <div class="summary-row discount">
+                    <span>Discount</span>
+                    <span id="summaryDiscount">-₹0</span>
+                </div>
+                <div class="summary-divider"></div>
+                <div class="summary-row total">
+                    <span>Total Payable</span>
+                    <span id="summaryTotal">₹0</span>
+                </div>
+            </div>
+            
+            <div class="coupon-section">
+                <input type="text" id="couponCode" placeholder="Enter coupon code">
+                <button onclick="applyCoupon()">Apply</button>
+            </div>
+            
+            <div class="delivery-estimate">
+                <p>📦 Estimated Delivery: <strong id="estimatedDelivery"></strong></p>
+            </div>
+            
+            <div class="policy-links">
+                <a href="#">Return Policy</a>
+                <a href="#">Cancellation Policy</a>
+            </div>
+        </aside>
+    </div>
+
+    <script src="checkout.js"></script>
+</body>
+</html>

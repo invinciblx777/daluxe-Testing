@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Order Flow</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .test-section { margin: 20px 0; padding: 20px; border: 1px solid #ddd; border-radius: 8px; }
+        button { padding: 10px 20px; margin: 10px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        .result { margin: 10px 0; padding: 10px; background: #f8f9fa; border-radius: 4px; }
+        .success { background: #d4edda !important; color: #155724; }
+        .error { background: #f8d7da !important; color: #721c24; }
+    </style>
+</head>
+<body>
+    <h1>Order Flow Test</h1>
+    
+    <div class="test-section">
+        <h2>1. Test API Connection</h2>
+        <button onclick="testAPI()">Test API Connection</button>
+        <div id="apiResult" class="result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>2. Test Order Creation</h2>
+        <button onclick="testOrderCreation()">Create Test Order</button>
+        <div id="orderResult" class="result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>3. View Orders in Admin</h2>
+        <p>After creating a test order, check the admin panel:</p>
+        <a href="http://localhost:3001/admin" target="_blank">
+            <button>Open Admin Panel</button>
+        </a>
+        <p><small>Login: daluxe@gmail.com / admin123 / 2026</small></p>
+    </div>
+    
+    <div class="test-section">
+        <h2>4. Test Main Website Cart</h2>
+        <p>Test the actual cart flow on the main website:</p>
+        <a href="http://localhost:3001" target="_blank">
+            <button>Open Main Website</button>
+        </a>
+        <p><small>Add products to cart and complete checkout</small></p>
+    </div>
+
+    <script>
+        async function testAPI() {
+            const result = document.getElementById('apiResult');
+            result.innerHTML = 'Testing API connection...';
+            
+            try {
+                const response = await fetch('http://localhost:3002/api/orders');
+                if (response.ok) {
+                    const orders = await response.json();
+                    result.innerHTML = `✅ API Connected! Found ${orders.length} existing orders.`;
+                    result.className = 'result success';
+                    console.log('Existing orders:', orders);
+                } else {
+                    result.innerHTML = `❌ API Error: ${response.status}`;
+                    result.className = 'result error';
+                }
+            } catch (error) {
+                result.innerHTML = `❌ Connection Error: ${error.message}`;
+                result.className = 'result error';
+                console.error('API test error:', error);
+            }
+        }
+
+        async function testOrderCreation() {
+            const result = document.getElementById('orderResult');
+            result.innerHTML = 'Creating test order...';
+            
+            const testOrder = {
+                orderId: 'ORD-TEST-' + Date.now(),
+                customerName: 'Test Customer',
+                customerEmail: 'test@example.com',
+                customerPhone: '9999999999',
+                deliveryAddress: 'Test Address, Test City, Test State - 123456',
+                paymentMethod: 'CARD',
+                paymentStatus: 'Paid',
+                orderStatus: 'Pending',
+                items: [
+                    {
+                        productId: 1,
+                        productName: 'Test Product',
+                        quantity: 2,
+                        price: 999,
+                        total: 1998
+                    }
+                ],
+                subtotal: 1998,
+                deliveryCharge: 50,
+                tax: 369,
+                discount: 0,
+                totalAmount: 2417,
+                orderDate: new Date().toISOString(),
+                expectedDelivery: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000).toISOString()
+            };
+
+            console.log('Sending test order:', testOrder);
+
+            try {
+                const response = await fetch('http://localhost:3002/api/orders', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(testOrder)
+                });
+
+                console.log('Response status:', response.status);
+                console.log('Response headers:', response.headers);
+
+                if (response.ok) {
+                    const responseData = await response.json();
+                    result.innerHTML = `✅ Order Created Successfully!<br>Order ID: ${testOrder.orderId}<br>Database ID: ${responseData.orderId}`;
+                    result.className = 'result success';
+                    console.log('Order created:', responseData);
+                } else {
+                    const error = await response.text();
+                    result.innerHTML = `❌ Order Creation Failed: ${error}`;
+                    result.className = 'result error';
+                    console.error('Order creation failed:', error);
+                }
+            } catch (error) {
+                result.innerHTML = `❌ Error: ${error.message}`;
+                result.className = 'result error';
+                console.error('Network error:', error);
+            }
+        }
+        
+        // Auto-test API connection on page load
+        window.addEventListener('load', () => {
+            setTimeout(testAPI, 1000);
+        });
+    </script>
+</body>
+</html>

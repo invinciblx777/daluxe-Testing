@@ -1,0 +1,1114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Virgin 5.0 - Luxury Ayurvedic Skincare</title>
+    <link rel="stylesheet" href="styles.css?v=1010">
+    <link rel="stylesheet" href="mobile-responsive.css?v=12">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Inria+Serif:wght@700&family=Playfair+Display:wght@600;700&family=Instrument+Sans:wght@600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Main Container -->
+    <div id="app">
+        <!-- Hero Page -->
+        <div id="hero-page" class="page active">
+            <div class="page-container">
+                <!-- Header/Navigation -->
+                <header class="header">
+                    <div class="logo">
+                        <img src="logo.png" alt="Virgin 5.0 Logo">
+                    </div>
+                    <nav class="nav" id="mobileNav">
+                        <a href="#" data-page="hero-page">Home</a>
+                        <a href="#" data-page="products-page">Products</a>
+                        <a href="#" data-page="about-page">About</a>
+                        <a href="#" data-page="contact-page">Contact</a>
+                    </nav>
+                    <div class="header-icons">
+                        <button class="wishlist-icon" id="openWishlist" title="Wishlist">
+                            <svg width="34" height="34" viewBox="0 0 34 34" fill="none">
+                                <path d="M17 28.3333C17 28.3333 4.25 21.25 4.25 11.3333C4.25 9.38044 5.02589 7.50716 6.40114 6.13191C7.77639 4.75666 9.64967 3.98077 11.6025 3.98077C14.0208 3.98077 16.0458 5.17827 17 7.08327C17.9542 5.17827 19.9792 3.98077 22.3975 3.98077C24.3503 3.98077 26.2236 4.75666 27.5989 6.13191C28.9741 7.50716 29.75 9.38044 29.75 11.3333C29.75 21.25 17 28.3333 17 28.3333Z" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            <span class="wishlist-count">0</span>
+                        </button>
+                        <button class="cart-icon" id="openCart">
+                            <svg width="34" height="34" viewBox="0 0 34 34" fill="none">
+                                <path d="M5.66602 26.9163C5.66602 27.6678 5.96453 28.3885 6.49588 28.9198C7.02723 29.4512 7.7479 29.7497 8.49935 29.7497C9.2508 29.7497 9.97147 29.4512 10.5028 28.9198C11.0342 28.3885 11.3327 27.6678 11.3327 26.9163C11.3327 26.1649 11.0342 25.4442 10.5028 24.9129C9.97147 24.3815 9.2508 24.083 8.49935 24.083C7.7479 24.083 7.02723 24.3815 6.49588 24.9129C5.96453 25.4442 5.66602 26.1649 5.66602 26.9163Z" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M17.7077 24.0833H8.49935V4.25H5.66602" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M8.5 7.08301L28.3333 8.49967L27.115 17.0238M23.375 18.4163H8.5" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M22.666 26.917H31.166" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M26.916 22.667V31.167" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <button class="mobile-nav-toggle" id="mobileNavToggle" aria-label="Toggle navigation">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="3" y1="6" x2="21" y2="6"></line>
+                            <line x1="3" y1="12" x2="21" y2="12"></line>
+                            <line x1="3" y1="18" x2="21" y2="18"></line>
+                        </svg>
+                    </button>
+                </header>
+                <div class="mobile-nav-overlay" id="mobileNavOverlay"></div>
+
+                <!-- Hero Section -->
+                <section class="hero-section">
+                    <div class="hero-background">
+                        <div class="gradient-overlay"></div>
+                    </div>
+                    
+                    <div class="decorative-elements">
+                        <div class="floating-image left"></div>
+                        <div class="floating-image right"></div>
+                    </div>
+                </section>
+                <!-- Features Section -->
+                <section class="features-section">
+                    <div class="hero-content">
+                        <h1 class="hero-title">Experience Luxury<br><span class="skincare-text">Skincare</span></h1>
+                        <p class="hero-subtitle">Contact discover the perfect blend of Ayurvedic tradition and<br>scientific innovation</p>
+                        <button class="cta-button" onclick="navigateToPage('products-page')">Shop Now <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M5 12h14m-7-7l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+                    </div>
+                    
+                    <div class="group-image">
+                        <img src="group21.png" alt="Group 21">
+                    </div>
+                </section>
+                
+                <!-- Ad Banners Section -->
+                <section class="ad-banners-section" id="homeBanners">
+                    <!-- Ad banners will be loaded here dynamically -->
+                </section>
+                
+                <!-- Best Sellers Section -->
+                <section class="products-section">
+                    <div class="section-header">
+                        <h2 class="section-title">Best Sellers</h2>
+                        <p class="section-subtitle">Our most loved products</p>
+                    </div>
+                    <div class="products-grid">
+                        <div class="product-card" data-product="1">
+                            <div class="product-image"></div>
+                            <div class="product-info">
+                                <h4>Night Cream</h4>
+                                <p class="price">₹999</p>
+                                <button class="add-to-cart-btn">Add to cart</button>
+                            </div>
+                        </div>
+                        <div class="product-card" data-product="2">
+                            <div class="product-image"></div>
+                            <div class="product-info">
+                                <h4>Serum</h4>
+                                <p class="price">₹999</p>
+                                <button class="add-to-cart-btn">Add to cart</button>
+                            </div>
+                        </div>
+                        <div class="product-card" data-product="3">
+                            <div class="product-image"></div>
+                            <div class="product-info">
+                                <h4>Face Cream</h4>
+                                <p class="price">₹999</p>
+                                <button class="add-to-cart-btn">Add to cart</button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Footer -->
+                <footer class="footer">
+                    <div class="footer-content">
+                        <div class="footer-cta">
+                            <h2>Ready to Transform Your Skin?</h2>
+                            <p>Join thousands of satisfied customers experiencing the Virgin 5.0 difference</p>
+                            <button class="explore-btn">Explore Collection</button>
+                        </div>
+                        
+                        <div class="footer-links">
+                            <div class="footer-column">
+                                <p class="footer-desc">Premium Ayurvedic cosmetics blending ancient wisdom with modern science.</p>
+                            </div>
+                            
+                            <div class="footer-column">
+                                <h4>Quick Links</h4>
+                                <ul>
+                                    <li><a href="#" data-page="products-page">Shop All</a></li>
+                                    <li><a href="#" data-page="about-page">About Us</a></li>
+                                    <li><a href="#" data-page="contact-page">Contact</a></li>
+                                </ul>
+                            </div>
+                            
+                            <div class="footer-column">
+                                <h4>Support</h4>
+                                <ul>
+                                    <li><a href="#">FAQ</a></li>
+                                    <li><a href="#">Shipping Policy</a></li>
+                                    <li><a href="#">Returns</a></li>
+                                </ul>
+                            </div>
+                            
+                            <div class="footer-column">
+                                <h4>Follow Us</h4>
+                                <div class="social-icons">
+                                    <a href="#" class="social-icon">
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                            <path d="M4 8C4 6.93913 4.42143 5.92172 5.17157 5.17157C5.92172 4.42143 6.93913 4 8 4H16C17.0609 4 18.0783 4.42143 18.8284 5.17157C19.5786 5.92172 20 6.93913 20 8V16C20 17.0609 19.5786 18.0783 18.8284 18.8284C18.0783 19.5786 17.0609 20 16 20H8C6.93913 20 5.92172 19.5786 5.17157 18.8284C4.42143 18.0783 4 17.0609 4 16V8Z" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
+                                            <path d="M9 12C9 12.7956 9.31607 13.5587 9.87868 14.1213C10.4413 14.6839 11.2044 15 12 15C12.7956 15 13.5587 14.6839 14.1213 14.1213C14.6839 13.5587 15 12.7956 15 12C15 11.2044 14.6839 10.4413 14.1213 9.87868C13.5587 9.31607 12.7956 9 12 9C11.2044 9 10.4413 9.31607 9.87868 9.87868C9.31607 10.4413 9 11.2044 9 12Z" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                    </a>
+                                    <a href="#" class="social-icon">
+                                        <svg width="21" height="18" viewBox="0 0 21 18" fill="none">
+                                            <path d="M12.3945 0.450195C14.0013 0.450202 15.1356 0.533895 15.8633 0.616211C16.1038 0.643424 16.3001 0.670462 16.4541 0.694336L16.0166 2.57715C15.9397 2.56464 15.8545 2.5493 15.7627 2.53613C15.3599 2.4784 14.8193 2.41895 14.2891 2.41895C13.7614 2.41895 13.2151 2.48597 12.7832 2.67871C12.3365 2.87806 11.9443 3.25295 11.9443 3.85352V6.40527H15.9951L15.8076 8.19824H11.9443V17.5498H8.02441V8.19824H5.4502V6.40527H8.02441V4.14844C8.02441 3.75287 8.03277 3.28825 8.12891 2.83594C8.22459 2.38587 8.40121 1.98203 8.71191 1.68262C9.46124 0.965871 10.5003 0.450195 12.3945 0.450195Z" stroke="white" stroke-width="0.9"/>
+                                        </svg>
+                                    </a>
+                                    <a href="#" class="social-icon">
+                                        <svg width="19" height="18" viewBox="0 0 19 18" fill="none">
+                                            <path d="M19 3.41186C18.3034 3.70671 17.5476 3.90328 16.7621 3.99454C17.5698 3.53822 18.1849 2.81513 18.4739 1.95164C17.718 2.37285 16.8881 2.68175 15.9988 2.85023C15.2874 2.13417 14.2722 1.68487 13.1533 1.68487C11.0043 1.68487 9.25546 3.34165 9.25546 5.37754C9.25546 5.66537 9.2851 5.94618 9.35921 6.21997C6.12091 6.06552 3.24571 4.59828 1.32644 2.35882C0.992979 2.9064 0.800311 3.53822 0.800311 4.21919C0.800311 5.49688 1.48947 6.62715 2.53432 7.29407C1.89704 7.27301 1.2968 7.10452 0.77067 6.83073V6.87286C0.77067 8.66303 2.11193 10.1583 3.89782 10.4953C3.57176 10.5796 3.22348 10.6287 2.86778 10.6287C2.61583 10.6287 2.3713 10.6076 2.13417 10.5655C2.63066 12.0328 4.06825 13.0998 5.77262 13.1279C4.43877 14.1178 2.75663 14.7075 0.933698 14.7075C0.622465 14.7075 0.311232 14.6934 -3.62396e-08 14.6583C1.7266 15.7044 3.77184 16.3151 5.9727 16.3151C13.1459 16.3151 17.0659 10.6849 17.0659 5.80577C17.0659 5.64431 17.0659 5.48284 17.0585 5.32839C17.8218 4.80187 18.4813 4.15601 19 3.41186Z" fill="white"/>
+                                        </svg>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="footer-bottom">
+                            <p>Website developed by <img src="glacier-logo.svg" alt="Glacier Studios" style="height: 20px; vertical-align: middle; margin: 0 5px;"> Glacier studios</p>
+                        </div>
+                    </div>
+                </footer>
+            </div>
+        </div>
+
+        <!-- Products Page -->
+        <div id="products-page" class="page">
+            <div class="page-container">
+                <header class="header">
+                    <div class="logo">
+                        <img src="logo.png" alt="Virgin 5.0 Logo">
+                    </div>
+                    <nav class="nav">
+                        <a href="#" data-page="hero-page">Home</a>
+                        <a href="#" data-page="products-page">Products</a>
+                        <a href="#" data-page="about-page">About</a>
+                        <a href="#" data-page="contact-page">Contact</a>
+                    </nav>
+                    <div class="header-icons">
+                        <button class="wishlist-icon" id="openWishlist2" title="Wishlist">
+                            <svg width="34" height="34" viewBox="0 0 34 34" fill="none">
+                                <path d="M17 28.3333C17 28.3333 4.25 21.25 4.25 11.3333C4.25 9.38044 5.02589 7.50716 6.40114 6.13191C7.77639 4.75666 9.64967 3.98077 11.6025 3.98077C14.0208 3.98077 16.0458 5.17827 17 7.08327C17.9542 5.17827 19.9792 3.98077 22.3975 3.98077C24.3503 3.98077 26.2236 4.75666 27.5989 6.13191C28.9741 7.50716 29.75 9.38044 29.75 11.3333C29.75 21.25 17 28.3333 17 28.3333Z" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            <span class="wishlist-count">0</span>
+                        </button>
+                        <button class="cart-icon" id="openCart2">
+                            <svg width="34" height="34" viewBox="0 0 34 34" fill="none">
+                                <path d="M5.66602 26.9163C5.66602 27.6678 5.96453 28.3885 6.49588 28.9198C7.02723 29.4512 7.7479 29.7497 8.49935 29.7497C9.2508 29.7497 9.97147 29.4512 10.5028 28.9198C11.0342 28.3885 11.3327 27.6678 11.3327 26.9163C11.3327 26.1649 11.0342 25.4442 10.5028 24.9129C9.97147 24.3815 9.2508 24.083 8.49935 24.083C7.7479 24.083 7.02723 24.3815 6.49588 24.9129C5.96453 25.4442 5.66602 26.1649 5.66602 26.9163Z" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M17.7077 24.0833H8.49935V4.25H5.66602" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M8.5 7.08301L28.3333 8.49967L27.115 17.0238M23.375 18.4163H8.5" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M22.666 26.917H31.166" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M26.916 22.667V31.167" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <button class="mobile-nav-toggle" id="mobileNavToggle2" aria-label="Toggle navigation">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="3" y1="6" x2="21" y2="6"></line>
+                            <line x1="3" y1="12" x2="21" y2="12"></line>
+                            <line x1="3" y1="18" x2="21" y2="18"></line>
+                        </svg>
+                    </button>
+                </header>
+                <div class="mobile-nav-overlay" id="mobileNavOverlay2"></div>
+
+                <section class="product-collection-section">
+                    <!-- Ad Banners Section -->
+                    <div class="ad-banners-section" id="productBanners">
+                        <!-- Ad banners will be loaded here dynamically -->
+                    </div>
+                    
+                    <h2 class="section-title">Our Collection</h2>
+                    <p class="section-subtitle">Discover premium products crafted with the finest ingredients</p>
+                    <div class="filter-tabs" id="filterTabs">
+                        <button class="filter-btn active">All Products</button>
+                        <button class="filter-btn">Face</button>
+                        <button class="filter-btn">Body</button>
+                        <button class="filter-btn">Hair</button>
+                        <button class="filter-btn">Oil</button>
+                    </div>
+                    <div class="products-grid large">
+                        <div class="product-card" data-product="1">
+                            <div class="product-image"></div>
+                            <div class="product-info">
+                                <h4>Night Cream</h4>
+                                <p class="price">₹999</p>
+                                <button class="add-to-cart-btn">Add to cart</button>
+                            </div>
+                        </div>
+                        <div class="product-card" data-product="2">
+                            <div class="product-image"></div>
+                            <div class="product-info">
+                                <h4>Serum</h4>
+                                <p class="price">₹1299</p>
+                                <button class="add-to-cart-btn">Add to cart</button>
+                            </div>
+                        </div>
+                        <div class="product-card" data-product="3">
+                            <div class="product-image"></div>
+                            <div class="product-info">
+                                <h4>Face Cream</h4>
+                                <p class="price">₹899</p>
+                                <button class="add-to-cart-btn">Add to cart</button>
+                            </div>
+                        </div>
+                        <div class="product-card" data-product="1">
+                            <div class="product-image"></div>
+                            <div class="product-info">
+                                <h4>Moisturizer</h4>
+                                <p class="price">₹799</p>
+                                <button class="add-to-cart-btn">Add to cart</button>
+                            </div>
+                        </div>
+                        <div class="product-card" data-product="2">
+                            <div class="product-image"></div>
+                            <div class="product-info">
+                                <h4>Cleanser</h4>
+                                <p class="price">₹699</p>
+                                <button class="add-to-cart-btn">Add to cart</button>
+                            </div>
+                        </div>
+                        <div class="product-card" data-product="3">
+                            <div class="product-image"></div>
+                            <div class="product-info">
+                                <h4>Toner</h4>
+                                <p class="price">₹599</p>
+                                <button class="add-to-cart-btn">Add to cart</button>
+                            </div>
+                        </div>
+                        <div class="product-card" data-product="1">
+                            <div class="product-image"></div>
+                            <div class="product-info">
+                                <h4>Face Mask</h4>
+                                <p class="price">₹1199</p>
+                                <button class="add-to-cart-btn">Add to cart</button>
+                            </div>
+                        </div>
+                        <div class="product-card" data-product="2">
+                            <div class="product-image"></div>
+                            <div class="product-info">
+                                <h4>Eye Cream</h4>
+                                <p class="price">₹1499</p>
+                                <button class="add-to-cart-btn">Add to cart</button>
+                            </div>
+                        </div>
+                        <div class="product-card" data-product="3">
+                            <div class="product-image"></div>
+                            <div class="product-info">
+                                <h4>Body Lotion</h4>
+                                <p class="price">₹999</p>
+                                <button class="add-to-cart-btn">Add to cart</button>
+                            </div>
+                        </div>
+                        <div class="product-card" data-product="1">
+                            <div class="product-image"></div>
+                            <div class="product-info">
+                                <h4>Hair Oil</h4>
+                                <p class="price">₹799</p>
+                                <button class="add-to-cart-btn">Add to cart</button>
+                            </div>
+                        </div>
+                        <div class="product-card" data-product="2">
+                            <div class="product-image"></div>
+                            <div class="product-info">
+                                <h4>Shampoo</h4>
+                                <p class="price">₹649</p>
+                                <button class="add-to-cart-btn">Add to cart</button>
+                            </div>
+                        </div>
+                        <div class="product-card" data-product="3">
+                            <div class="product-image"></div>
+                            <div class="product-info">
+                                <h4>Conditioner</h4>
+                                <p class="price">₹699</p>
+                                <button class="add-to-cart-btn">Add to cart</button>
+                            </div>
+                        </div>
+                        <div class="product-card" data-product="1">
+                            <div class="product-image"></div>
+                            <div class="product-info">
+                                <h4>Sunscreen</h4>
+                                <p class="price">₹899</p>
+                                <button class="add-to-cart-btn">Add to cart</button>
+                            </div>
+                        </div>
+                        <div class="product-card" data-product="2">
+                            <div class="product-image"></div>
+                            <div class="product-info">
+                                <h4>Lip Balm</h4>
+                                <p class="price">₹299</p>
+                                <button class="add-to-cart-btn">Add to cart</button>
+                            </div>
+                        </div>
+                        <div class="product-card" data-product="3">
+                            <div class="product-image"></div>
+                            <div class="product-info">
+                                <h4>Body Scrub</h4>
+                                <p class="price">₹1099</p>
+                                <button class="add-to-cart-btn">Add to cart</button>
+                            </div>
+                        </div>
+                        <div class="product-card" data-product="1">
+                            <div class="product-image"></div>
+                            <div class="product-info">
+                                <h4>Face Wash</h4>
+                                <p class="price">₹549</p>
+                                <button class="add-to-cart-btn">Add to cart</button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <footer class="footer">
+                    <div class="footer-content">
+                        <div class="footer-cta">
+                            <h2>Ready to Transform Your Skin?</h2>
+                            <p>Join thousands of satisfied customers experiencing the Virgin 5.0 difference</p>
+                            <button class="explore-btn">Explore Collection</button>
+                        </div>
+                        
+                        <div class="footer-links">
+                            <div class="footer-column">
+                                <p class="footer-desc">Premium Ayurvedic cosmetics blending ancient wisdom with modern science.</p>
+                            </div>
+                            
+                            <div class="footer-column">
+                                <h4>Quick Links</h4>
+                                <ul>
+                                    <li><a href="#" data-page="products-page">Shop All</a></li>
+                                    <li><a href="#" data-page="about-page">About Us</a></li>
+                                    <li><a href="#" data-page="contact-page">Contact</a></li>
+                                </ul>
+                            </div>
+                            
+                            <div class="footer-column">
+                                <h4>Support</h4>
+                                <ul>
+                                    <li><a href="#">FAQ</a></li>
+                                    <li><a href="#">Shipping Policy</a></li>
+                                    <li><a href="#">Returns</a></li>
+                                </ul>
+                            </div>
+                            
+                            <div class="footer-column">
+                                <h4>Follow Us</h4>
+                                <div class="social-icons">
+                                    <a href="#" class="social-icon">
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                            <path d="M4 8C4 6.93913 4.42143 5.92172 5.17157 5.17157C5.92172 4.42143 6.93913 4 8 4H16C17.0609 4 18.0783 4.42143 18.8284 5.17157C19.5786 5.92172 20 6.93913 20 8V16C20 17.0609 19.5786 18.0783 18.8284 18.8284C18.0783 19.5786 17.0609 20 16 20H8C6.93913 20 5.92172 19.5786 5.17157 18.8284C4.42143 18.0783 4 17.0609 4 16V8Z" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
+                                            <path d="M9 12C9 12.7956 9.31607 13.5587 9.87868 14.1213C10.4413 14.6839 11.2044 15 12 15C12.7956 15 13.5587 14.6839 14.1213 14.1213C14.6839 13.5587 15 12.7956 15 12C15 11.2044 14.6839 10.4413 14.1213 9.87868C13.5587 9.31607 12.7956 9 12 9C11.2044 9 10.4413 9.31607 9.87868 9.87868C9.31607 10.4413 9 11.2044 9 12Z" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                    </a>
+                                    <a href="#" class="social-icon">
+                                        <svg width="21" height="18" viewBox="0 0 21 18" fill="none">
+                                            <path d="M12.3945 0.450195C14.0013 0.450202 15.1356 0.533895 15.8633 0.616211C16.1038 0.643424 16.3001 0.670462 16.4541 0.694336L16.0166 2.57715C15.9397 2.56464 15.8545 2.5493 15.7627 2.53613C15.3599 2.4784 14.8193 2.41895 14.2891 2.41895C13.7614 2.41895 13.2151 2.48597 12.7832 2.67871C12.3365 2.87806 11.9443 3.25295 11.9443 3.85352V6.40527H15.9951L15.8076 8.19824H11.9443V17.5498H8.02441V8.19824H5.4502V6.40527H8.02441V4.14844C8.02441 3.75287 8.03277 3.28825 8.12891 2.83594C8.22459 2.38587 8.40121 1.98203 8.71191 1.68262C9.46124 0.965871 10.5003 0.450195 12.3945 0.450195Z" stroke="white" stroke-width="0.9"/>
+                                        </svg>
+                                    </a>
+                                    <a href="#" class="social-icon">
+                                        <svg width="19" height="18" viewBox="0 0 19 18" fill="none">
+                                            <path d="M19 3.41186C18.3034 3.70671 17.5476 3.90328 16.7621 3.99454C17.5698 3.53822 18.1849 2.81513 18.4739 1.95164C17.718 2.37285 16.8881 2.68175 15.9988 2.85023C15.2874 2.13417 14.2722 1.68487 13.1533 1.68487C11.0043 1.68487 9.25546 3.34165 9.25546 5.37754C9.25546 5.66537 9.2851 5.94618 9.35921 6.21997C6.12091 6.06552 3.24571 4.59828 1.32644 2.35882C0.992979 2.9064 0.800311 3.53822 0.800311 4.21919C0.800311 5.49688 1.48947 6.62715 2.53432 7.29407C1.89704 7.27301 1.2968 7.10452 0.77067 6.83073V6.87286C0.77067 8.66303 2.11193 10.1583 3.89782 10.4953C3.57176 10.5796 3.22348 10.6287 2.86778 10.6287C2.61583 10.6287 2.3713 10.6076 2.13417 10.5655C2.63066 12.0328 4.06825 13.0998 5.77262 13.1279C4.43877 14.1178 2.75663 14.7075 0.933698 14.7075C0.622465 14.7075 0.311232 14.6934 -3.62396e-08 14.6583C1.7266 15.7044 3.77184 16.3151 5.9727 16.3151C13.1459 16.3151 17.0659 10.6849 17.0659 5.80577C17.0659 5.64431 17.0659 5.48284 17.0585 5.32839C17.8218 4.80187 18.4813 4.15601 19 3.41186Z" fill="white"/>
+                                        </svg>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="footer-bottom">
+                            <p>Website developed by <img src="glacier-logo.svg" alt="Glacier Studios" style="height: 20px; vertical-align: middle; margin: 0 5px;"> Glacier studios</p>
+                        </div>
+                    </div>
+                </footer>
+            </div>
+        </div>
+
+        <!-- About Page -->
+        <div id="about-page" class="page">
+            <div class="page-container">
+                <header class="header">
+                    <div class="logo">
+                        <img src="logo.png" alt="Virgin 5.0 Logo">
+                    </div>
+                    <nav class="nav">
+                        <a href="#" data-page="hero-page">Home</a>
+                        <a href="#" data-page="products-page">Products</a>
+                        <a href="#" data-page="about-page">About</a>
+                        <a href="#" data-page="contact-page">Contact</a>
+                    </nav>
+                    <div class="header-icons">
+                        <button class="wishlist-icon" id="openWishlist3" title="Wishlist">
+                            <svg width="34" height="34" viewBox="0 0 34 34" fill="none">
+                                <path d="M17 28.3333C17 28.3333 4.25 21.25 4.25 11.3333C4.25 9.38044 5.02589 7.50716 6.40114 6.13191C7.77639 4.75666 9.64967 3.98077 11.6025 3.98077C14.0208 3.98077 16.0458 5.17827 17 7.08327C17.9542 5.17827 19.9792 3.98077 22.3975 3.98077C24.3503 3.98077 26.2236 4.75666 27.5989 6.13191C28.9741 7.50716 29.75 9.38044 29.75 11.3333C29.75 21.25 17 28.3333 17 28.3333Z" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            <span class="wishlist-count">0</span>
+                        </button>
+                        <button class="cart-icon" id="openCart3">
+                            <svg width="34" height="34" viewBox="0 0 34 34" fill="none">
+                                <path d="M5.66602 26.9163C5.66602 27.6678 5.96453 28.3885 6.49588 28.9198C7.02723 29.4512 7.7479 29.7497 8.49935 29.7497C9.2508 29.7497 9.97147 29.4512 10.5028 28.9198C11.0342 28.3885 11.3327 27.6678 11.3327 26.9163C11.3327 26.1649 11.0342 25.4442 10.5028 24.9129C9.97147 24.3815 9.2508 24.083 8.49935 24.083C7.7479 24.083 7.02723 24.3815 6.49588 24.9129C5.96453 25.4442 5.66602 26.1649 5.66602 26.9163Z" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M17.7077 24.0833H8.49935V4.25H5.66602" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M8.5 7.08301L28.3333 8.49967L27.115 17.0238M23.375 18.4163H8.5" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M22.666 26.917H31.166" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M26.916 22.667V31.167" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <button class="mobile-nav-toggle" id="mobileNavToggle3" aria-label="Toggle navigation">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="3" y1="6" x2="21" y2="6"></line>
+                            <line x1="3" y1="12" x2="21" y2="12"></line>
+                            <line x1="3" y1="18" x2="21" y2="18"></line>
+                        </svg>
+                    </button>
+                </header>
+                <div class="mobile-nav-overlay" id="mobileNavOverlay3"></div>
+
+                <section class="about-section">
+                    <div class="stats-section">
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <h3 class="stat-number" data-target="100" data-suffix="%">0</h3>
+                                <p class="stat-label">Dermatologically Tested</p>
+                            </div>
+                            <div class="stat-card">
+                                <h3 class="stat-number" data-target="5000" data-suffix="+">0</h3>
+                                <p class="stat-label">Happy Customers</p>
+                            </div>
+                            <div class="stat-card">
+                                <h3 class="stat-number" data-target="50" data-suffix="+">0</h3>
+                                <p class="stat-label">Premium Products</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="story-section">
+                        <h2 class="story-title">Our Story</h2>
+                        <div class="story-underline"></div>
+                        <p class="story-text">Virgin 5.0 was born from a simple belief: luxury skincare should blend<br>the ancient wisdom of Ayurveda with cutting-edge scientific innovation.<br>Every product we create is a testament to this philosophy.</p>
+                    </div>
+
+                    <div class="promise-section">
+                        <h2 class="promise-title">Our Brand Promise</h2>
+                        <p class="promise-text">We promise to deliver skincare that honors your skin's natural intelligence while providing<br>scientifically-proven results. Each formula is crafted with premium ingredients, tested for<br>safety, and designed to make you feel truly special.</p>
+                    </div>
+
+                    <div class="why-choose-section">
+                        <h2 class="why-choose-title">Why Choose Virgin 5.0</h2>
+                        
+                        <div class="features-grid" style="display: flex; align-items: flex-start; justify-content: center; gap: 30px;">
+                            <div class="feature-item" style="display: flex; flex-direction: column; align-items: center; justify-content: flex-start; min-height: 300px; flex: 1;">
+                                <div class="feature-icon" style="text-align: center; margin-bottom: 20px; display: flex; align-items: center; justify-content: center; height: 120px;">
+                                    <img src="svg1.svg" alt="Premium Quality" width="120" height="120" style="display: block; margin: 0 auto;">
+                                </div>
+                                <h4 style="font-family: 'Playfair Display', serif; font-weight: bold; font-size: 23px; text-align: center;">Premium Quality</h4>
+                                <p style="color: #9C9C9C; font-family: 'Inter', sans-serif; font-weight: 500; font-size: 18px; text-align: center;">We never compromise on the quality of our ingredients or formulations</p>
+                            </div>
+                            <div class="feature-item" style="display: flex; flex-direction: column; align-items: center; justify-content: flex-start; min-height: 300px; flex: 1;">
+                                <div class="feature-icon" style="text-align: center; margin-bottom: 20px; display: flex; align-items: center; justify-content: center; height: 120px;">
+                                    <img src="svg2.svg" alt="Natural & Safe" width="81" height="81" style="display: block; margin: 0 auto;">
+                                </div>
+                                <h4 style="font-family: 'Playfair Display', serif; font-weight: bold; font-size: 23px; text-align: center;">Natural & Safe</h4>
+                                <p style="color: #9C9C9C; font-family: 'Inter', sans-serif; font-weight: 500; font-size: 18px; text-align: center;">Ayurvedic wisdom combined with modern scientific research</p>
+                            </div>
+                            <div class="feature-item" style="display: flex; flex-direction: column; align-items: center; justify-content: flex-start; min-height: 300px; flex: 1;">
+                                <div class="feature-icon" style="text-align: center; margin-bottom: 20px; display: flex; align-items: center; justify-content: center; height: 120px;">
+                                    <img src="svg3.svg" alt="Dermat Tested" width="81" height="81" style="display: block; margin: 0 auto;">
+                                </div>
+                                <h4 style="font-family: 'Playfair Display', serif; font-weight: bold; font-size: 23px; text-align: center;">Dermat Tested</h4>
+                                <p style="color: #9C9C9C; font-family: 'Inter', sans-serif; font-weight: 500; font-size: 18px; text-align: center;">All products are rigorously tested for safety and efficacy</p>
+                            </div>
+                            <div class="feature-item" style="display: flex; flex-direction: column; align-items: center; justify-content: flex-start; min-height: 300px; flex: 1;">
+                                <div class="feature-icon" style="text-align: center; margin-bottom: 20px; display: flex; align-items: center; justify-content: center; height: 120px;">
+                                    <img src="svg4.svg" alt="Award Winning" width="81" height="81" style="display: block; margin: 0 auto;">
+                                </div>
+                                <h4 style="font-family: 'Playfair Display', serif; font-weight: bold; font-size: 23px; text-align: center;">Award Winning</h4>
+                                <p style="color: #9C9C9C; font-family: 'Inter', sans-serif; font-weight: 500; font-size: 18px; text-align: center;">Recognized for excellence in premium skincare innovation</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mission-section">
+                        <h2 class="mission-title">Our Mission</h2>
+                        <p class="mission-text">To revolutionize skincare by creating products that are not just effective, but<br>also safe, sustainable, and accessible to everyone seeking premium quality. We<br>believe that everyone deserves to experience the confidence that comes with<br>healthy, radiant skin. That's why we're committed to transparency, quality, and<br>innovation in everything we do.</p>
+                    </div>
+                </section>
+
+                <footer class="footer">
+                    <div class="footer-content">
+                        <div class="footer-cta">
+                            <h2>Ready to Transform Your Skin?</h2>
+                            <p>Join thousands of satisfied customers experiencing the Virgin 5.0 difference</p>
+                            <button class="explore-btn">Explore Collection</button>
+                        </div>
+                        
+                        <div class="footer-links">
+                            <div class="footer-column">
+                                <p class="footer-desc">Premium Ayurvedic cosmetics blending ancient wisdom with modern science.</p>
+                            </div>
+                            
+                            <div class="footer-column">
+                                <h4>Quick Links</h4>
+                                <ul>
+                                    <li><a href="#" data-page="products-page">Shop All</a></li>
+                                    <li><a href="#" data-page="about-page">About Us</a></li>
+                                    <li><a href="#" data-page="contact-page">Contact</a></li>
+                                </ul>
+                            </div>
+                            
+                            <div class="footer-column">
+                                <h4>Support</h4>
+                                <ul>
+                                    <li><a href="#">FAQ</a></li>
+                                    <li><a href="#">Shipping Policy</a></li>
+                                    <li><a href="#">Returns</a></li>
+                                </ul>
+                            </div>
+                            
+                            <div class="footer-column">
+                                <h4>Follow Us</h4>
+                                <div class="social-icons">
+                                    <a href="#" class="social-icon">
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                            <path d="M4 8C4 6.93913 4.42143 5.92172 5.17157 5.17157C5.92172 4.42143 6.93913 4 8 4H16C17.0609 4 18.0783 4.42143 18.8284 5.17157C19.5786 5.92172 20 6.93913 20 8V16C20 17.0609 19.5786 18.0783 18.8284 18.8284C18.0783 19.5786 17.0609 20 16 20H8C6.93913 20 5.92172 19.5786 5.17157 18.8284C4.42143 18.0783 4 17.0609 4 16V8Z" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
+                                            <path d="M9 12C9 12.7956 9.31607 13.5587 9.87868 14.1213C10.4413 14.6839 11.2044 15 12 15C12.7956 15 13.5587 14.6839 14.1213 14.1213C14.6839 13.5587 15 12.7956 15 12C15 11.2044 14.6839 10.4413 14.1213 9.87868C13.5587 9.31607 12.7956 9 12 9C11.2044 9 10.4413 9.31607 9.87868 9.87868C9.31607 10.4413 9 11.2044 9 12Z" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                    </a>
+                                    <a href="#" class="social-icon">
+                                        <svg width="21" height="18" viewBox="0 0 21 18" fill="none">
+                                            <path d="M12.3945 0.450195C14.0013 0.450202 15.1356 0.533895 15.8633 0.616211C16.1038 0.643424 16.3001 0.670462 16.4541 0.694336L16.0166 2.57715C15.9397 2.56464 15.8545 2.5493 15.7627 2.53613C15.3599 2.4784 14.8193 2.41895 14.2891 2.41895C13.7614 2.41895 13.2151 2.48597 12.7832 2.67871C12.3365 2.87806 11.9443 3.25295 11.9443 3.85352V6.40527H15.9951L15.8076 8.19824H11.9443V17.5498H8.02441V8.19824H5.4502V6.40527H8.02441V4.14844C8.02441 3.75287 8.03277 3.28825 8.12891 2.83594C8.22459 2.38587 8.40121 1.98203 8.71191 1.68262C9.46124 0.965871 10.5003 0.450195 12.3945 0.450195Z" stroke="white" stroke-width="0.9"/>
+                                        </svg>
+                                    </a>
+                                    <a href="#" class="social-icon">
+                                        <svg width="19" height="18" viewBox="0 0 19 18" fill="none">
+                                            <path d="M19 3.41186C18.3034 3.70671 17.5476 3.90328 16.7621 3.99454C17.5698 3.53822 18.1849 2.81513 18.4739 1.95164C17.718 2.37285 16.8881 2.68175 15.9988 2.85023C15.2874 2.13417 14.2722 1.68487 13.1533 1.68487C11.0043 1.68487 9.25546 3.34165 9.25546 5.37754C9.25546 5.66537 9.2851 5.94618 9.35921 6.21997C6.12091 6.06552 3.24571 4.59828 1.32644 2.35882C0.992979 2.9064 0.800311 3.53822 0.800311 4.21919C0.800311 5.49688 1.48947 6.62715 2.53432 7.29407C1.89704 7.27301 1.2968 7.10452 0.77067 6.83073V6.87286C0.77067 8.66303 2.11193 10.1583 3.89782 10.4953C3.57176 10.5796 3.22348 10.6287 2.86778 10.6287C2.61583 10.6287 2.3713 10.6076 2.13417 10.5655C2.63066 12.0328 4.06825 13.0998 5.77262 13.1279C4.43877 14.1178 2.75663 14.7075 0.933698 14.7075C0.622465 14.7075 0.311232 14.6934 -3.62396e-08 14.6583C1.7266 15.7044 3.77184 16.3151 5.9727 16.3151C13.1459 16.3151 17.0659 10.6849 17.0659 5.80577C17.0659 5.64431 17.0659 5.48284 17.0585 5.32839C17.8218 4.80187 18.4813 4.15601 19 3.41186Z" fill="white"/>
+                                        </svg>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="footer-bottom">
+                            <p>Website developed by <img src="glacier-logo.svg" alt="Glacier Studios" style="height: 20px; vertical-align: middle; margin: 0 5px;"> Glacier studios</p>
+                        </div>
+                    </div>
+                </footer>
+            </div>
+        </div>
+
+        <!-- Contact Page -->
+        <div id="contact-page" class="page">
+            <div class="page-container">
+                <header class="header">
+                    <div class="logo">
+                        <img src="logo.png" alt="Virgin 5.0 Logo">
+                    </div>
+                    <nav class="nav">
+                        <a href="#" data-page="hero-page">Home</a>
+                        <a href="#" data-page="products-page">Products</a>
+                        <a href="#" data-page="about-page">About</a>
+                        <a href="#" data-page="contact-page">Contact</a>
+                    </nav>
+                    <div class="header-icons">
+                        <button class="wishlist-icon" id="openWishlist4" title="Wishlist">
+                            <svg width="34" height="34" viewBox="0 0 34 34" fill="none">
+                                <path d="M17 28.3333C17 28.3333 4.25 21.25 4.25 11.3333C4.25 9.38044 5.02589 7.50716 6.40114 6.13191C7.77639 4.75666 9.64967 3.98077 11.6025 3.98077C14.0208 3.98077 16.0458 5.17827 17 7.08327C17.9542 5.17827 19.9792 3.98077 22.3975 3.98077C24.3503 3.98077 26.2236 4.75666 27.5989 6.13191C28.9741 7.50716 29.75 9.38044 29.75 11.3333C29.75 21.25 17 28.3333 17 28.3333Z" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            <span class="wishlist-count">0</span>
+                        </button>
+                        <button class="cart-icon" id="openCart4">
+                            <svg width="34" height="34" viewBox="0 0 34 34" fill="none">
+                                <path d="M5.66602 26.9163C5.66602 27.6678 5.96453 28.3885 6.49588 28.9198C7.02723 29.4512 7.7479 29.7497 8.49935 29.7497C9.2508 29.7497 9.97147 29.4512 10.5028 28.9198C11.0342 28.3885 11.3327 27.6678 11.3327 26.9163C11.3327 26.1649 11.0342 25.4442 10.5028 24.9129C9.97147 24.3815 9.2508 24.083 8.49935 24.083C7.7479 24.083 7.02723 24.3815 6.49588 24.9129C5.96453 25.4442 5.66602 26.1649 5.66602 26.9163Z" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M17.7077 24.0833H8.49935V4.25H5.66602" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M8.5 7.08301L28.3333 8.49967L27.115 17.0238M23.375 18.4163H8.5" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M22.666 26.917H31.166" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M26.916 22.667V31.167" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <button class="mobile-nav-toggle" id="mobileNavToggle4" aria-label="Toggle navigation">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="3" y1="6" x2="21" y2="6"></line>
+                            <line x1="3" y1="12" x2="21" y2="12"></line>
+                            <line x1="3" y1="18" x2="21" y2="18"></line>
+                        </svg>
+                    </button>
+                </header>
+                <div class="mobile-nav-overlay" id="mobileNavOverlay4"></div>
+
+                <section class="contact-section">
+                    <div class="contact-container">
+                        <h1 class="contact-title">Contact US</h1>
+                        <p class="contact-subtitle">We'd love to hear from you. Get in touch with us.</p>
+                        
+                        <div class="contact-form-wrapper">
+                            <h2 class="form-title">Send us a Message</h2>
+                            <div class="form-title-underline"></div>
+                            <form class="contact-form" id="contactForm" onsubmit="submitContactForm(event)">
+                                <div class="form-group">
+                                    <label>Name</label>
+                                    <input type="text" name="name" placeholder="Your Name" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>E-Mail</label>
+                                    <input type="email" name="email" placeholder="Your@gmail.com" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Phone</label>
+                                    <input type="tel" name="phone" placeholder="91+">
+                                </div>
+                                <div class="form-group">
+                                    <label>Message</label>
+                                    <textarea name="message" placeholder="Tell us how we can help...." rows="6" required></textarea>
+                                </div>
+                                <button type="submit" class="contact-submit-btn">Submit</button>
+                            </form>
+                        </div>
+                        
+                        <div class="contact-cards">
+                            <div class="contact-card">
+                                <div class="contact-icon">
+                                    <img src="contact1.svg" alt="Email" width="120" height="120">
+                                </div>
+                                <div class="contact-card-content">
+                                    <h3>Email</h3>
+                                    <p>mydaluxe@gmail.com</p>
+                                </div>
+                            </div>
+                            
+                            <div class="contact-card">
+                                <div class="contact-icon">
+                                    <img src="contact2.svg" alt="Phone" width="120" height="120">
+                                </div>
+                                <div class="contact-card-content">
+                                    <h3>Phone</h3>
+                                    <p>1234567892</p>
+                                </div>
+                            </div>
+                            
+                            <div class="contact-card">
+                                <div class="contact-icon">
+                                    <img src="contact3.svg" alt="Office" width="120" height="120">
+                                </div>
+                                <div class="contact-card-content">
+                                    <h3>Office</h3>
+                                    <p>Sanaullah compound, dharavi mahim east mumbai 400017</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <footer class="footer">
+                    <div class="footer-content">
+                        <div class="footer-cta">
+                            <h2>Ready to Transform Your Skin?</h2>
+                            <p>Join thousands of satisfied customers experiencing the Virgin 5.0 difference</p>
+                            <button class="explore-btn">Explore Collection</button>
+                        </div>
+                        
+                        <div class="footer-links">
+                            <div class="footer-column">
+                                <p class="footer-desc">Premium Ayurvedic cosmetics blending ancient wisdom with modern science.</p>
+                            </div>
+                            
+                            <div class="footer-column">
+                                <h4>Quick Links</h4>
+                                <ul>
+                                    <li><a href="#" data-page="products-page">Shop All</a></li>
+                                    <li><a href="#" data-page="about-page">About Us</a></li>
+                                    <li><a href="#" data-page="contact-page">Contact</a></li>
+                                </ul>
+                            </div>
+                            
+                            <div class="footer-column">
+                                <h4>Support</h4>
+                                <ul>
+                                    <li><a href="#">FAQ</a></li>
+                                    <li><a href="#">Shipping Policy</a></li>
+                                    <li><a href="#">Returns</a></li>
+                                </ul>
+                            </div>
+                            
+                            <div class="footer-column">
+                                <h4>Follow Us</h4>
+                                <div class="social-icons">
+                                    <a href="#" class="social-icon">
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                            <path d="M4 8C4 6.93913 4.42143 5.92172 5.17157 5.17157C5.92172 4.42143 6.93913 4 8 4H16C17.0609 4 18.0783 4.42143 18.8284 5.17157C19.5786 5.92172 20 6.93913 20 8V16C20 17.0609 19.5786 18.0783 18.8284 18.8284C18.0783 19.5786 17.0609 20 16 20H8C6.93913 20 5.92172 19.5786 5.17157 18.8284C4.42143 18.0783 4 17.0609 4 16V8Z" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
+                                            <path d="M9 12C9 12.7956 9.31607 13.5587 9.87868 14.1213C10.4413 14.6839 11.2044 15 12 15C12.7956 15 13.5587 14.6839 14.1213 14.1213C14.6839 13.5587 15 12.7956 15 12C15 11.2044 14.6839 10.4413 14.1213 9.87868C13.5587 9.31607 12.7956 9 12 9C11.2044 9 10.4413 9.31607 9.87868 9.87868C9.31607 10.4413 9 11.2044 9 12Z" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                    </a>
+                                    <a href="#" class="social-icon">
+                                        <svg width="21" height="18" viewBox="0 0 21 18" fill="none">
+                                            <path d="M12.3945 0.450195C14.0013 0.450202 15.1356 0.533895 15.8633 0.616211C16.1038 0.643424 16.3001 0.670462 16.4541 0.694336L16.0166 2.57715C15.9397 2.56464 15.8545 2.5493 15.7627 2.53613C15.3599 2.4784 14.8193 2.41895 14.2891 2.41895C13.7614 2.41895 13.2151 2.48597 12.7832 2.67871C12.3365 2.87806 11.9443 3.25295 11.9443 3.85352V6.40527H15.9951L15.8076 8.19824H11.9443V17.5498H8.02441V8.19824H5.4502V6.40527H8.02441V4.14844C8.02441 3.75287 8.03277 3.28825 8.12891 2.83594C8.22459 2.38587 8.40121 1.98203 8.71191 1.68262C9.46124 0.965871 10.5003 0.450195 12.3945 0.450195Z" stroke="white" stroke-width="0.9"/>
+                                        </svg>
+                                    </a>
+                                    <a href="#" class="social-icon">
+                                        <svg width="19" height="18" viewBox="0 0 19 18" fill="none">
+                                            <path d="M19 3.41186C18.3034 3.70671 17.5476 3.90328 16.7621 3.99454C17.5698 3.53822 18.1849 2.81513 18.4739 1.95164C17.718 2.37285 16.8881 2.68175 15.9988 2.85023C15.2874 2.13417 14.2722 1.68487 13.1533 1.68487C11.0043 1.68487 9.25546 3.34165 9.25546 5.37754C9.25546 5.66537 9.2851 5.94618 9.35921 6.21997C6.12091 6.06552 3.24571 4.59828 1.32644 2.35882C0.992979 2.9064 0.800311 3.53822 0.800311 4.21919C0.800311 5.49688 1.48947 6.62715 2.53432 7.29407C1.89704 7.27301 1.2968 7.10452 0.77067 6.83073V6.87286C0.77067 8.66303 2.11193 10.1583 3.89782 10.4953C3.57176 10.5796 3.22348 10.6287 2.86778 10.6287C2.61583 10.6287 2.3713 10.6076 2.13417 10.5655C2.63066 12.0328 4.06825 13.0998 5.77262 13.1279C4.43877 14.1178 2.75663 14.7075 0.933698 14.7075C0.622465 14.7075 0.311232 14.6934 -3.62396e-08 14.6583C1.7266 15.7044 3.77184 16.3151 5.9727 16.3151C13.1459 16.3151 17.0659 10.6849 17.0659 5.80577C17.0659 5.64431 17.0659 5.48284 17.0585 5.32839C17.8218 4.80187 18.4813 4.15601 19 3.41186Z" fill="white"/>
+                                        </svg>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="footer-bottom">
+                            <p>Website developed by <img src="glacier-logo.svg" alt="Glacier Studios" style="height: 20px; vertical-align: middle; margin: 0 5px;"> Glacier studios</p>
+                        </div>
+                    </div>
+                </footer>
+            </div>
+        </div>
+
+        <!-- Product Detail Modal -->
+        <div id="product-modal" class="modal">
+            <div class="modal-backdrop"></div>
+            <div class="modal-content product-detail">
+                <button class="modal-close">&times;</button>
+                <div class="product-detail-grid">
+                    <div class="product-images">
+                        <div class="main-image-container">
+                            <button class="image-nav-btn prev-btn" id="prevImageBtn">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="15 18 9 12 15 6"></polyline>
+                                </svg>
+                            </button>
+                            <div class="main-image"></div>
+                            <button class="image-nav-btn next-btn" id="nextImageBtn">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="9 18 15 12 9 6"></polyline>
+                                </svg>
+                            </button>
+                            <div class="image-indicator" id="imageIndicator">1 / 1</div>
+                        </div>
+                    </div>
+                    <div class="product-details">
+                        <h2>Night Cream</h2>
+                        <div class="product-rating">
+                            <div class="stars">★★★★★</div>
+                            <span>(4.5/5)</span>
+                        </div>
+                        <p class="product-price">₹999</p>
+                        <p class="stock-status">In Stock</p>
+                        <div class="quantity-selector">
+                            <label>Quantity:</label>
+                            <div class="quantity-controls">
+                                <button class="qty-btn minus">-</button>
+                                <input type="number" value="1" min="1" class="qty-input">
+                                <button class="qty-btn plus">+</button>
+                            </div>
+                        </div>
+                        <button class="add-to-cart-btn large">Add to Cart</button>
+                        <button class="wishlist-btn">♡ Add to Wishlist</button>
+                        <div class="product-description">
+                            <h3>Description</h3>
+                            <p>Our premium Night Cream is formulated with the finest Ayurvedic ingredients to nourish and rejuvenate your skin while you sleep. Rich in antioxidants and natural oils, it deeply moisturizes and repairs skin damage.</p>
+                            <h4>Benefits:</h4>
+                            <ul>
+                                <li>Deep hydration for 24 hours</li>
+                                <li>Reduces fine lines and wrinkles</li>
+                                <li>Improves skin texture and tone</li>
+                                <li>100% natural ingredients</li>
+                                <li>Dermatologically tested</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cart Modal -->
+        <div id="cart-modal" class="modal">
+            <div class="modal-backdrop"></div>
+            <div class="modal-content cart-content">
+                <button class="modal-close">&times;</button>
+                
+                <!-- Step Progress Indicator -->
+                <div class="checkout-progress" id="checkoutProgress">
+                    <div class="progress-step active" data-step="1">
+                        <span class="step-number">1</span>
+                        <span class="step-label">Cart</span>
+                    </div>
+                    <div class="progress-line"></div>
+                    <div class="progress-step" data-step="2">
+                        <span class="step-number">2</span>
+                        <span class="step-label">Delivery</span>
+                    </div>
+                    <div class="progress-line"></div>
+                    <div class="progress-step" data-step="3">
+                        <span class="step-number">3</span>
+                        <span class="step-label">Payment</span>
+                    </div>
+                    <div class="progress-line"></div>
+                    <div class="progress-step" data-step="4">
+                        <span class="step-number">4</span>
+                        <span class="step-label">Confirmation</span>
+                    </div>
+                </div>
+
+                <!-- Step 1: Cart Review -->
+                <div class="checkout-step active" id="cart-step">
+                    <h2>Shopping Cart</h2>
+                    <div class="cart-items" id="cartItems">
+                        <!-- Cart items will be populated by JavaScript -->
+                    </div>
+                    <div class="cart-summary">
+                        <div class="cart-total">
+                            <span>Total:</span>
+                            <span class="total-amount">₹0</span>
+                        </div>
+                        <button class="proceed-btn" onclick="goToDeliveryStep()">Proceed to Checkout</button>
+                    </div>
+                </div>
+
+                <!-- Step 2: Delivery Details -->
+                <div class="checkout-step" id="delivery-step">
+                    <h2>Delivery Details</h2>
+                    <form id="deliveryForm" class="delivery-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Full Name *</label>
+                                <input type="text" name="fullName" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Mobile Number *</label>
+                                <input type="tel" name="mobile" pattern="[0-9]{10}" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Email (Optional)</label>
+                            <input type="email" name="email">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>House / Flat / Building *</label>
+                            <input type="text" name="house" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Street / Area *</label>
+                            <input type="text" name="street" required>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>City *</label>
+                                <input type="text" name="city" required>
+                            </div>
+                            <div class="form-group">
+                                <label>State *</label>
+                                <input type="text" name="state" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Pincode / ZIP *</label>
+                                <input type="text" name="pincode" pattern="[0-9]{6}" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Landmark (Optional)</label>
+                                <input type="text" name="landmark">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group checkbox-group">
+                            <label>
+                                <input type="checkbox" name="sameBilling" checked>
+                                Billing address same as delivery address
+                            </label>
+                        </div>
+                        
+                        <div class="step-buttons">
+                            <button type="button" class="back-btn" onclick="goToCartStep()">Back to Cart</button>
+                            <button type="submit" class="proceed-btn">Continue to Payment</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Step 3: Payment -->
+                <div class="checkout-step" id="payment-step">
+                    <h2>Payment Method</h2>
+                    
+                    <div class="payment-methods">
+                        <label class="payment-option">
+                            <input type="radio" name="payment" value="card" checked>
+                            <div class="payment-card">
+                                <svg class="payment-icon" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                    <rect x="2" y="5" width="20" height="14" rx="2" stroke="currentColor" stroke-width="2"/>
+                                    <line x1="2" y1="10" x2="22" y2="10" stroke="currentColor" stroke-width="2"/>
+                                </svg>
+                                <span>Credit / Debit Card</span>
+                            </div>
+                        </label>
+                        
+                        <label class="payment-option">
+                            <input type="radio" name="payment" value="upi">
+                            <div class="payment-card">
+                                <svg class="payment-icon" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                    <rect x="5" y="2" width="14" height="20" rx="2" stroke="currentColor" stroke-width="2"/>
+                                    <line x1="12" y1="18" x2="12.01" y2="18" stroke="currentColor" stroke-width="2"/>
+                                </svg>
+                                <span>UPI (GPay, PhonePe, Paytm)</span>
+                            </div>
+                        </label>
+                        
+                        <label class="payment-option">
+                            <input type="radio" name="payment" value="cod">
+                            <div class="payment-card">
+                                <svg class="payment-icon" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                    <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+                                    <path d="m15 9-6 6" stroke="currentColor" stroke-width="2"/>
+                                    <path d="m9 9 6 6" stroke="currentColor" stroke-width="2"/>
+                                </svg>
+                                <span>Cash on Delivery</span>
+                            </div>
+                        </label>
+                        
+                        <label class="payment-option">
+                            <input type="radio" name="payment" value="netbanking">
+                            <div class="payment-card">
+                                <svg class="payment-icon" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                    <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" stroke="currentColor" stroke-width="2"/>
+                                    <polyline points="9,22 9,12 15,12 15,22" stroke="currentColor" stroke-width="2"/>
+                                </svg>
+                                <span>Net Banking</span>
+                            </div>
+                        </label>
+                    </div>
+                    
+                    <div id="paymentDetails" class="payment-details"></div>
+                    
+                    <div class="order-summary-section">
+                        <h3>Order Summary</h3>
+                        <div class="summary-breakdown">
+                            <div class="summary-row">
+                                <span>Items Total</span>
+                                <span id="summarySubtotal">₹0</span>
+                            </div>
+                            <div class="summary-row">
+                                <span>Delivery Charges</span>
+                                <span id="summaryDelivery">₹50</span>
+                            </div>
+                            <div class="summary-row">
+                                <span>Tax (GST 18%)</span>
+                                <span id="summaryTax">₹0</span>
+                            </div>
+                            <div class="summary-row discount">
+                                <span>Discount</span>
+                                <span id="summaryDiscount">-₹0</span>
+                            </div>
+                            <div class="summary-divider"></div>
+                            <div class="summary-row total">
+                                <span>Total Payable</span>
+                                <span id="summaryTotal">₹0</span>
+                            </div>
+                        </div>
+                        
+                        <div class="coupon-section">
+                            <input type="text" id="couponCode" placeholder="Enter coupon code">
+                            <button onclick="applyCoupon()">Apply</button>
+                        </div>
+                    </div>
+                    
+                    <div class="secure-payment">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2" stroke="currentColor" stroke-width="2"/>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4" stroke="currentColor" stroke-width="2"/>
+                        </svg>
+                        <span>Secure Payment - Your information is encrypted and secure</span>
+                    </div>
+                    
+                    <div class="step-buttons">
+                        <button type="button" class="back-btn" onclick="goToDeliveryStep()">Back to Delivery</button>
+                        <button class="proceed-btn" onclick="placeOrder()">Place Order</button>
+                    </div>
+                </div>
+
+                <!-- Step 4: Confirmation -->
+                <div class="checkout-step" id="confirmation-step">
+                    <div class="confirmation-success">
+                        <div class="success-icon">
+                            <svg width="60" height="60" viewBox="0 0 24 24" fill="none">
+                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" stroke="#28a745" stroke-width="2"/>
+                                <polyline points="22,4 12,14.01 9,11.01" stroke="#28a745" stroke-width="2"/>
+                            </svg>
+                        </div>
+                        <h2>Order Placed Successfully!</h2>
+                        <p class="order-id">Order ID: <strong id="confirmOrderId"></strong></p>
+                        
+                        <div class="confirmation-details">
+                            <div class="detail-row">
+                                <span>Delivery Address:</span>
+                                <span id="confirmAddress"></span>
+                            </div>
+                            <div class="detail-row">
+                                <span>Payment Method:</span>
+                                <span id="confirmPayment"></span>
+                            </div>
+                            <div class="detail-row">
+                                <span>Expected Delivery:</span>
+                                <span id="confirmDelivery"></span>
+                            </div>
+                            <div class="detail-row">
+                                <span>Total Amount:</span>
+                                <span id="confirmTotal"></span>
+                            </div>
+                        </div>
+                        
+                        <p class="confirmation-message">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" stroke="currentColor" stroke-width="2"/>
+                                <polyline points="22,6 12,13 2,6" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                            Order details sent to your SMS / Email
+                        </p>
+                        
+                        <div class="confirmation-actions">
+                            <button class="proceed-btn" onclick="continueShopping()">Continue Shopping</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Wishlist Modal -->
+        <div id="wishlist-modal" class="modal">
+            <div class="modal-backdrop"></div>
+            <div class="modal-content cart-content">
+                <button class="modal-close">&times;</button>
+                <h2>My Wishlist</h2>
+                <div class="wishlist-items" id="wishlistItems">
+                    <!-- Wishlist items will be populated by JavaScript -->
+                </div>
+                <div class="empty-wishlist" id="emptyWishlist" style="display: none;">
+                    <svg width="80" height="80" viewBox="0 0 24 24" fill="none" style="opacity: 0.3; margin: 0 auto 20px;">
+                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" stroke="currentColor" stroke-width="2"/>
+                    </svg>
+                    <p style="color: #999; font-size: 18px;">Your wishlist is empty</p>
+                    <p style="color: #666; font-size: 14px; margin-top: 10px;">Add products you love to your wishlist</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Floating WhatsApp Button -->
+    <a href="https://wa.me/911234567892" target="_blank" class="whatsapp-float" title="Chat with us on WhatsApp">
+        <svg width="32" height="32" viewBox="0 0 32 32" fill="white">
+            <path d="M16 0C7.164 0 0 7.164 0 16c0 2.825.738 5.488 2.031 7.813L0 32l8.375-2.094A15.926 15.926 0 0016 32c8.836 0 16-7.164 16-16S24.836 0 16 0zm0 29.333c-2.547 0-4.96-.719-7.031-1.969l-.5-.281-5.188 1.313 1.344-5.063-.313-.531A13.26 13.26 0 012.667 16c0-7.364 5.969-13.333 13.333-13.333S29.333 8.636 29.333 16 23.364 29.333 16 29.333zm7.313-9.979c-.406-.203-2.375-1.172-2.75-1.297-.375-.125-.656-.188-.938.188-.281.375-1.094 1.297-1.344 1.578-.25.281-.5.313-.906.109-.406-.203-1.719-.633-3.281-2.031-1.219-1.094-2.031-2.438-2.281-2.844-.25-.406-.031-.625.172-.828.188-.188.406-.5.609-.75.203-.25.281-.406.406-.688.125-.281.063-.531-.031-.75-.094-.219-.938-2.25-1.281-3.094-.344-.813-.688-.688-.938-.688h-.813c-.281 0-.75.109-1.125.531-.375.422-1.438 1.406-1.438 3.438s1.469 3.969 1.672 4.25c.203.281 2.875 4.406 6.969 6.188.969.422 1.719.672 2.313.859.969.313 1.844.266 2.531.156.781-.125 2.375-.969 2.719-1.906.344-.938.344-1.734.25-1.906-.094-.172-.375-.281-.781-.484z"/>
+        </svg>
+    </a>
+
+    <script src="cart.js?v=3"></script>
+    <script src="products-loader.js?v=3"></script>
+    <script src="wishlist.js?v=1"></script>
+    <script src="app.js?v=3"></script>
+</body>
+</html>
+

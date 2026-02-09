@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Orders Frontend</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .order { border: 1px solid #ccc; margin: 10px 0; padding: 10px; }
+        .error { color: red; }
+        .success { color: green; }
+    </style>
+</head>
+<body>
+    <h1>Orders API Test</h1>
+    <button onclick="loadOrders()">Load Orders</button>
+    <div id="result"></div>
+
+    <script>
+        async function loadOrders() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = '<p>Loading...</p>';
+            
+            try {
+                console.log('🔄 Fetching orders from API...');
+                const response = await fetch('http://localhost:3002/api/orders');
+                console.log('📡 Response status:', response.status);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const orders = await response.json();
+                console.log('📋 Orders received:', orders);
+                
+                if (orders.length === 0) {
+                    resultDiv.innerHTML = '<p class="error">No orders found</p>';
+                    return;
+                }
+                
+                let html = `<p class="success">Found ${orders.length} orders:</p>`;
+                orders.forEach(order => {
+                    html += `
+                        <div class="order">
+                            <strong>Order ID:</strong> ${order.order_id}<br>
+                            <strong>Customer:</strong> ${order.customer_name}<br>
+                            <strong>Status:</strong> ${order.status}<br>
+                            <strong>Total:</strong> ₹${parseFloat(order.total_amount).toLocaleString('en-IN')}<br>
+                            <strong>Date:</strong> ${new Date(order.order_date).toLocaleDateString()}
+                        </div>
+                    `;
+                });
+                
+                resultDiv.innerHTML = html;
+                
+            } catch (error) {
+                console.error('❌ Error loading orders:', error);
+                resultDiv.innerHTML = `<p class="error">Error: ${error.message}</p>`;
+            }
+        }
+        
+        // Auto-load on page load
+        window.addEventListener('load', loadOrders);
+    </script>
+</body>
+</html>
