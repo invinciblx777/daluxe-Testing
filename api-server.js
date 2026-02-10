@@ -55,7 +55,7 @@ const upload = multer({
         const allowedTypes = /jpeg|jpg|png|gif|webp/;
         const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
         const mimetype = allowedTypes.test(file.mimetype);
-        
+
         if (mimetype && extname) {
             return cb(null, true);
         } else {
@@ -72,7 +72,7 @@ const uploadMultiple = multer({
         const allowedTypes = /jpeg|jpg|png|gif|webp/;
         const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
         const mimetype = allowedTypes.test(file.mimetype);
-        
+
         if (mimetype && extname) {
             return cb(null, true);
         } else {
@@ -107,14 +107,14 @@ app.get('/api/products/:id', (req, res) => {
         if (results.length === 0) {
             return res.status(404).json({ error: 'Product not found' });
         }
-        
+
         // Get product images
         const imageQuery = 'SELECT * FROM product_images WHERE product_id = ? ORDER BY is_main DESC, display_order ASC';
         db.query(imageQuery, [req.params.id], (imgErr, images) => {
             if (imgErr) {
                 return res.status(500).json({ error: imgErr.message });
             }
-            
+
             const product = results[0];
             product.images = images;
             res.json(product);
@@ -136,10 +136,10 @@ app.get('/api/products/:id/images', (req, res) => {
 // Add new product
 app.post('/api/products', uploadMultiple, (req, res) => {
     const { name, description, price, rating, stock, benefits, sku, category } = req.body;
-    
+
     // Get main image
     const mainImage = req.files && req.files['mainImage'] ? `/uploads/${req.files['mainImage'][0].filename}` : null;
-    
+
     // Determine status based on stock
     let status = 'Active';
     if (stock == 0) {
@@ -147,28 +147,28 @@ app.post('/api/products', uploadMultiple, (req, res) => {
     } else if (stock < 10) {
         status = 'Low Stock';
     }
-    
+
     const query = 'INSERT INTO products (name, description, price, rating, stock, benefits, image, sku, category, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
-    
+
     db.query(query, [
-        name, 
-        description || '', 
-        price, 
-        rating || 0, 
-        stock, 
-        benefits || '', 
-        mainImage, 
-        sku || '', 
-        category || 'Face', 
+        name,
+        description || '',
+        price,
+        rating || 0,
+        stock,
+        benefits || '',
+        mainImage,
+        sku || '',
+        category || 'Face',
         status
     ], (err, result) => {
         if (err) {
             console.error('Error adding product:', err);
             return res.status(500).json({ error: err.message });
         }
-        
+
         const productId = result.insertId;
-        
+
         // Insert main image into product_images table
         if (mainImage) {
             const mainImageQuery = 'INSERT INTO product_images (product_id, image_path, is_main, display_order) VALUES (?, ?, TRUE, 0)';
@@ -176,7 +176,7 @@ app.post('/api/products', uploadMultiple, (req, res) => {
                 if (imgErr) console.error('Error saving main image:', imgErr);
             });
         }
-        
+
         // Insert sub images
         if (req.files && req.files['subImages']) {
             req.files['subImages'].forEach((file, index) => {
@@ -187,11 +187,11 @@ app.post('/api/products', uploadMultiple, (req, res) => {
                 });
             });
         }
-        
-        res.json({ 
-            success: true, 
+
+        res.json({
+            success: true,
             message: 'Product added successfully',
-            productId: productId 
+            productId: productId
         });
     });
 });
@@ -200,7 +200,7 @@ app.post('/api/products', uploadMultiple, (req, res) => {
 app.put('/api/products/:id', uploadMultiple, (req, res) => {
     const { name, description, price, rating, stock, benefits, sku, category } = req.body;
     const productId = req.params.id;
-    
+
     // Determine status based on stock
     let status = 'Active';
     if (stock == 0) {
@@ -208,22 +208,22 @@ app.put('/api/products/:id', uploadMultiple, (req, res) => {
     } else if (stock < 10) {
         status = 'Low Stock';
     }
-    
+
     // Check if new main image was uploaded
     const mainImage = req.files && req.files['mainImage'] ? `/uploads/${req.files['mainImage'][0].filename}` : null;
-    
+
     if (mainImage) {
         const query = 'UPDATE products SET name=?, description=?, price=?, rating=?, stock=?, benefits=?, image=?, sku=?, category=?, status=? WHERE id=?';
         db.query(query, [name, description, price, rating, stock, benefits, mainImage, sku, category, status, productId], (err) => {
             if (err) {
                 return res.status(500).json({ error: err.message });
             }
-            
+
             // Update main image in product_images table
             const updateMainImageQuery = 'UPDATE product_images SET image_path=? WHERE product_id=? AND is_main=TRUE';
             db.query(updateMainImageQuery, [mainImage, productId], (imgErr, imgResult) => {
                 if (imgErr) console.error('Error updating main image:', imgErr);
-                
+
                 // If no main image existed, insert it
                 if (imgResult.affectedRows === 0) {
                     const insertMainImageQuery = 'INSERT INTO product_images (product_id, image_path, is_main, display_order) VALUES (?, ?, TRUE, 0)';
@@ -232,14 +232,14 @@ app.put('/api/products/:id', uploadMultiple, (req, res) => {
                     });
                 }
             });
-            
+
             // Add new sub images if provided
             if (req.files && req.files['subImages']) {
                 // Get current max display_order
                 const maxOrderQuery = 'SELECT MAX(display_order) as maxOrder FROM product_images WHERE product_id=? AND is_main=FALSE';
                 db.query(maxOrderQuery, [productId], (orderErr, orderResult) => {
                     const startOrder = orderResult[0].maxOrder ? orderResult[0].maxOrder + 1 : 1;
-                    
+
                     req.files['subImages'].forEach((file, index) => {
                         const imagePath = `/uploads/${file.filename}`;
                         const subImageQuery = 'INSERT INTO product_images (product_id, image_path, is_main, display_order) VALUES (?, ?, FALSE, ?)';
@@ -249,7 +249,7 @@ app.put('/api/products/:id', uploadMultiple, (req, res) => {
                     });
                 });
             }
-            
+
             res.json({ success: true, message: 'Product updated successfully' });
         });
     } else {
@@ -258,14 +258,14 @@ app.put('/api/products/:id', uploadMultiple, (req, res) => {
             if (err) {
                 return res.status(500).json({ error: err.message });
             }
-            
+
             // Add new sub images if provided
             if (req.files && req.files['subImages']) {
                 // Get current max display_order
                 const maxOrderQuery = 'SELECT MAX(display_order) as maxOrder FROM product_images WHERE product_id=? AND is_main=FALSE';
                 db.query(maxOrderQuery, [productId], (orderErr, orderResult) => {
                     const startOrder = orderResult[0].maxOrder ? orderResult[0].maxOrder + 1 : 1;
-                    
+
                     req.files['subImages'].forEach((file, index) => {
                         const imagePath = `/uploads/${file.filename}`;
                         const subImageQuery = 'INSERT INTO product_images (product_id, image_path, is_main, display_order) VALUES (?, ?, FALSE, ?)';
@@ -275,7 +275,7 @@ app.put('/api/products/:id', uploadMultiple, (req, res) => {
                     });
                 });
             }
-            
+
             res.json({ success: true, message: 'Product updated successfully' });
         });
     }
@@ -284,20 +284,20 @@ app.put('/api/products/:id', uploadMultiple, (req, res) => {
 // Delete product image
 app.delete('/api/products/:productId/images/:imageId', (req, res) => {
     const { productId, imageId } = req.params;
-    
+
     // Get image path before deleting
     const getImageQuery = 'SELECT image_path, is_main FROM product_images WHERE id=? AND product_id=?';
     db.query(getImageQuery, [imageId, productId], (err, results) => {
         if (err) {
             return res.status(500).json({ error: err.message });
         }
-        
+
         if (results.length === 0) {
             return res.status(404).json({ error: 'Image not found' });
         }
-        
+
         const isMain = results[0].is_main;
-        
+
         // Don't allow deleting the main image if it's the only image
         if (isMain) {
             const countQuery = 'SELECT COUNT(*) as count FROM product_images WHERE product_id=?';
@@ -305,28 +305,28 @@ app.delete('/api/products/:productId/images/:imageId', (req, res) => {
                 if (countErr) {
                     return res.status(500).json({ error: countErr.message });
                 }
-                
+
                 if (countResults[0].count === 1) {
                     return res.status(400).json({ error: 'Cannot delete the only image. Please upload a new main image first.' });
                 }
-                
+
                 // Delete the image
                 const deleteQuery = 'DELETE FROM product_images WHERE id=?';
                 db.query(deleteQuery, [imageId], (delErr) => {
                     if (delErr) {
                         return res.status(500).json({ error: delErr.message });
                     }
-                    
+
                     // If main image was deleted, promote the first sub image to main
                     const promoteQuery = 'UPDATE product_images SET is_main=TRUE, display_order=0 WHERE product_id=? ORDER BY display_order ASC LIMIT 1';
                     db.query(promoteQuery, [productId], (promoteErr) => {
                         if (promoteErr) console.error('Error promoting image:', promoteErr);
-                        
+
                         // Update main image in products table
                         const updateProductQuery = 'UPDATE products SET image=(SELECT image_path FROM product_images WHERE product_id=? AND is_main=TRUE LIMIT 1) WHERE id=?';
                         db.query(updateProductQuery, [productId, productId]);
                     });
-                    
+
                     res.json({ success: true, message: 'Image deleted successfully' });
                 });
             });
@@ -347,7 +347,7 @@ app.delete('/api/products/:productId/images/:imageId', (req, res) => {
 app.put('/api/products/:id/offer', (req, res) => {
     const { offer_percentage } = req.body;
     const query = 'UPDATE products SET offer_percentage = ? WHERE id = ?';
-    
+
     db.query(query, [offer_percentage, req.params.id], (err) => {
         if (err) {
             return res.status(500).json({ error: err.message });
@@ -360,7 +360,7 @@ app.put('/api/products/:id/offer', (req, res) => {
 app.put('/api/products/:id/stock', (req, res) => {
     const { quantity } = req.body;
     const query = 'UPDATE products SET stock = stock - ? WHERE id = ?';
-    
+
     db.query(query, [quantity, req.params.id], (err) => {
         if (err) {
             return res.status(500).json({ error: err.message });
@@ -410,23 +410,23 @@ app.get('/api/categories/:id', (req, res) => {
 // Add new category
 app.post('/api/categories', (req, res) => {
     const { name, description, is_active } = req.body;
-    
+
     if (!name || !name.trim()) {
         return res.status(400).json({ error: 'Category name is required' });
     }
-    
+
     // Get the next display order automatically
     const getMaxOrderQuery = 'SELECT COALESCE(MAX(display_order), 0) as maxOrder FROM categories';
-    
+
     db.query(getMaxOrderQuery, (err, results) => {
         if (err) {
             return res.status(500).json({ error: err.message });
         }
-        
+
         const nextOrder = results[0].maxOrder + 1;
-        
+
         const query = 'INSERT INTO categories (name, description, display_order, is_active) VALUES (?, ?, ?, ?)';
-        
+
         db.query(query, [
             name.trim(),
             description || '',
@@ -439,10 +439,10 @@ app.post('/api/categories', (req, res) => {
                 }
                 return res.status(500).json({ error: err.message });
             }
-            res.json({ 
-                success: true, 
+            res.json({
+                success: true,
                 message: 'Category added successfully',
-                categoryId: result.insertId 
+                categoryId: result.insertId
             });
         });
     });
@@ -451,13 +451,13 @@ app.post('/api/categories', (req, res) => {
 // Update category
 app.put('/api/categories/:id', (req, res) => {
     const { name, description, display_order, is_active } = req.body;
-    
+
     if (!name || !name.trim()) {
         return res.status(400).json({ error: 'Category name is required' });
     }
-    
+
     const query = 'UPDATE categories SET name=?, description=?, display_order=?, is_active=? WHERE id=?';
-    
+
     db.query(query, [
         name.trim(),
         description || '',
@@ -482,19 +482,19 @@ app.put('/api/categories/:id', (req, res) => {
 app.delete('/api/categories/:id', (req, res) => {
     // First check if any products use this category
     const checkQuery = 'SELECT COUNT(*) as count FROM products WHERE category = (SELECT name FROM categories WHERE id = ?)';
-    
+
     db.query(checkQuery, [req.params.id], (err, results) => {
         if (err) {
             return res.status(500).json({ error: err.message });
         }
-        
+
         if (results[0].count > 0) {
-            return res.status(400).json({ 
+            return res.status(400).json({
                 error: `Cannot delete category. ${results[0].count} product(s) are using this category.`,
                 productsCount: results[0].count
             });
         }
-        
+
         // Delete the category
         const deleteQuery = 'DELETE FROM categories WHERE id = ?';
         db.query(deleteQuery, [req.params.id], (err, result) => {
@@ -525,21 +525,21 @@ app.get('/api/messages', (req, res) => {
 // Submit contact form message
 app.post('/api/messages', (req, res) => {
     const { name, email, phone, message } = req.body;
-    
+
     if (!name || !email || !message) {
         return res.status(400).json({ error: 'Name, email, and message are required' });
     }
-    
+
     const query = 'INSERT INTO messages (name, email, phone, message, status) VALUES (?, ?, ?, ?, ?)';
-    
+
     db.query(query, [name, email, phone || '', message, 'unread'], (err, result) => {
         if (err) {
             return res.status(500).json({ error: err.message });
         }
-        res.json({ 
-            success: true, 
+        res.json({
+            success: true,
             message: 'Message sent successfully',
-            messageId: result.insertId 
+            messageId: result.insertId
         });
     });
 });
@@ -547,7 +547,7 @@ app.post('/api/messages', (req, res) => {
 // Mark message as read
 app.put('/api/messages/:id/read', (req, res) => {
     const query = 'UPDATE messages SET status=?, read_at=NOW() WHERE id=?';
-    
+
     db.query(query, ['read', req.params.id], (err, result) => {
         if (err) {
             return res.status(500).json({ error: err.message });
@@ -592,7 +592,7 @@ app.get('/api/coupons', (req, res) => {
         GROUP BY c.id
         ORDER BY c.created_at DESC
     `;
-    
+
     db.query(query, (err, results) => {
         if (err) {
             console.error('Error fetching coupons:', err);
@@ -606,7 +606,7 @@ app.get('/api/coupons', (req, res) => {
 app.get('/api/coupons/:id', (req, res) => {
     const couponId = req.params.id;
     const query = 'SELECT * FROM coupons WHERE id = ?';
-    
+
     db.query(query, [couponId], (err, results) => {
         if (err) {
             console.error('Error fetching coupon:', err);
@@ -728,7 +728,7 @@ app.put('/api/coupons/:id', (req, res) => {
 // Delete coupon
 app.delete('/api/coupons/:id', (req, res) => {
     const couponId = req.params.id;
-    
+
     db.query('DELETE FROM coupons WHERE id = ?', [couponId], (err, result) => {
         if (err) {
             console.error('Error deleting coupon:', err);
@@ -744,7 +744,7 @@ app.delete('/api/coupons/:id', (req, res) => {
 // Validate coupon code
 app.post('/api/coupons/validate', (req, res) => {
     const { code, order_amount } = req.body;
-    
+
     if (!code) {
         return res.status(400).json({ error: 'Coupon code is required' });
     }
@@ -767,11 +767,11 @@ app.post('/api/coupons/validate', (req, res) => {
         }
 
         const coupon = results[0];
-        
+
         // Check minimum order amount
         if (order_amount < coupon.minimum_order_amount) {
-            return res.status(400).json({ 
-                error: `Minimum order amount of ₹${coupon.minimum_order_amount} required for this coupon` 
+            return res.status(400).json({
+                error: `Minimum order amount of ₹${coupon.minimum_order_amount} required for this coupon`
             });
         }
 
@@ -803,7 +803,7 @@ app.post('/api/coupons/validate', (req, res) => {
 // Get coupon usage history
 app.get('/api/coupons/:id/usage', (req, res) => {
     const couponId = req.params.id;
-    
+
     const query = `
         SELECT cu.*, c.code, c.description
         FROM coupon_usage cu
@@ -811,7 +811,7 @@ app.get('/api/coupons/:id/usage', (req, res) => {
         WHERE cu.coupon_id = ?
         ORDER BY cu.used_at DESC
     `;
-    
+
     db.query(query, [couponId], (err, results) => {
         if (err) {
             console.error('Error fetching coupon usage:', err);
@@ -829,7 +829,7 @@ app.get('/api/coupon-usage', (req, res) => {
         JOIN coupons c ON cu.coupon_id = c.id
         ORDER BY cu.used_at DESC
     `;
-    
+
     db.query(query, (err, results) => {
         if (err) {
             console.error('Error fetching coupon usage:', err);
@@ -842,12 +842,12 @@ app.get('/api/coupon-usage', (req, res) => {
 // Record coupon usage
 app.post('/api/coupon-usage', (req, res) => {
     const { coupon_id, order_id, customer_email, customer_name, discount_amount } = req.body;
-    
+
     const query = `
         INSERT INTO coupon_usage (coupon_id, order_id, customer_email, customer_name, discount_amount)
         VALUES (?, ?, ?, ?, ?)
     `;
-    
+
     db.query(query, [coupon_id, order_id, customer_email, customer_name, discount_amount], (err, result) => {
         if (err) {
             console.error('Error recording coupon usage:', err);
@@ -860,9 +860,9 @@ app.post('/api/coupon-usage', (req, res) => {
 // Update coupon usage count
 app.put('/api/coupons/:id/use', (req, res) => {
     const couponId = req.params.id;
-    
+
     const query = 'UPDATE coupons SET used_count = used_count + 1 WHERE id = ?';
-    
+
     db.query(query, [couponId], (err, result) => {
         if (err) {
             console.error('Error updating coupon usage count:', err);
@@ -872,15 +872,20 @@ app.put('/api/coupons/:id/use', (req, res) => {
     });
 });
 
-// Start server
-app.listen(PORT, () => {
-    console.log('═══════════════════════════════════════════════════════');
-    console.log('  Luxe Beauty API Server');
-    console.log('═══════════════════════════════════════════════════════');
-    console.log(`  🚀 API running at: http://localhost:${PORT}`);
-    console.log(`  📦 Database: luxe_beauty`);
-    console.log('═══════════════════════════════════════════════════════\n');
-});
+// Export the app for Vercel
+module.exports = app;
+
+// Start server only if run directly
+if (require.main === module) {
+    app.listen(PORT, () => {
+        console.log('═══════════════════════════════════════════════════════');
+        console.log('  Luxe Beauty API Server');
+        console.log('═══════════════════════════════════════════════════════');
+        console.log(`  🚀 API running at: http://localhost:${PORT}`);
+        console.log(`  📦 Database: luxe_beauty`);
+        console.log('═══════════════════════════════════════════════════════\n');
+    });
+}
 
 // Orders API Routes
 
@@ -891,7 +896,7 @@ app.get('/api/orders/latest', (req, res) => {
         if (err) {
             return res.status(500).json({ error: err.message });
         }
-        
+
         const latestOrderId = results.length > 0 ? results[0].order_id : null;
         res.json({ latestOrderId });
     });
@@ -912,7 +917,7 @@ app.get('/api/orders', (req, res) => {
 app.post('/api/orders', (req, res) => {
     console.log('📦 Received order creation request');
     console.log('📋 Request body:', JSON.stringify(req.body, null, 2));
-    
+
     const {
         orderId,
         customerName,
@@ -931,24 +936,24 @@ app.post('/api/orders', (req, res) => {
         orderDate,
         expectedDelivery
     } = req.body;
-    
+
     // Validate required fields
     if (!orderId || !customerName || !customerPhone || !deliveryAddress || !paymentMethod || !items || !totalAmount) {
         console.error('❌ Missing required fields');
         return res.status(400).json({ error: 'Missing required fields' });
     }
-    
+
     // Convert items array to JSON string for storage
     const itemsJson = JSON.stringify(items);
-    
+
     console.log('💾 Inserting order into database...');
-    
+
     const query = `INSERT INTO orders 
         (order_id, customer_name, customer_email, customer_phone, delivery_address, 
          payment_method, payment_status, status, items, subtotal, delivery_charge, 
          tax, discount, total_amount, order_date, expected_delivery) 
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-    
+
     db.query(query, [
         orderId, customerName, customerEmail, customerPhone, deliveryAddress,
         paymentMethod, paymentStatus, orderStatus, itemsJson, subtotal,
@@ -958,10 +963,10 @@ app.post('/api/orders', (req, res) => {
             console.error('❌ Database error:', err);
             return res.status(500).json({ error: err.message });
         }
-        
+
         console.log('✅ Order created successfully with ID:', result.insertId);
-        res.json({ 
-            success: true, 
+        res.json({
+            success: true,
             message: 'Order created successfully',
             orderId: result.insertId,
             orderNumber: orderId
@@ -987,7 +992,7 @@ app.get('/api/orders/:id', (req, res) => {
 app.put('/api/orders/:id/status', (req, res) => {
     const { status, payment_status } = req.body;
     const query = 'UPDATE orders SET status=?, payment_status=? WHERE id=?';
-    
+
     db.query(query, [status, payment_status, req.params.id], (err) => {
         if (err) {
             return res.status(500).json({ error: err.message });
@@ -1015,10 +1020,10 @@ app.get('/api/orders/stats/summary', (req, res) => {
         shipped: 'SELECT COUNT(*) as count FROM orders WHERE status = "Shipped"',
         delivered: 'SELECT COUNT(*) as count FROM orders WHERE status = "Delivered"'
     };
-    
+
     const stats = {};
     let completed = 0;
-    
+
     Object.keys(queries).forEach(key => {
         db.query(queries[key], (err, results) => {
             if (!err) {
@@ -1039,14 +1044,14 @@ app.get('/api/ads', (req, res) => {
     const { location } = req.query;
     let query = 'SELECT * FROM ads';
     let params = [];
-    
+
     if (location) {
         query += ' WHERE location = ?';
         params.push(location);
     }
-    
+
     query += ' ORDER BY display_order ASC, created_at DESC';
-    
+
     db.query(query, params, (err, results) => {
         if (err) {
             return res.status(500).json({ error: err.message });
@@ -1058,7 +1063,7 @@ app.get('/api/ads', (req, res) => {
 // Get active ads for specific location
 app.get('/api/ads/active/:location', (req, res) => {
     const query = 'SELECT * FROM ads WHERE location = ? AND is_active = TRUE ORDER BY display_order ASC';
-    
+
     db.query(query, [req.params.location], (err, results) => {
         if (err) {
             return res.status(500).json({ error: err.message });
@@ -1084,33 +1089,33 @@ app.get('/api/ads/:id', (req, res) => {
 // Add new ad
 app.post('/api/ads', upload.single('image'), (req, res) => {
     const { title, location, is_active, display_order } = req.body;
-    
+
     if (!title || !location) {
         return res.status(400).json({ error: 'Title and location are required' });
     }
-    
+
     if (!req.file) {
         return res.status(400).json({ error: 'Image is required' });
     }
-    
+
     const imagePath = `/uploads/${req.file.filename}`;
-    
+
     // Convert checkbox value to boolean
     const isActive = is_active === 'on' || is_active === true || is_active === 'true';
-    
+
     // Get next display order if not provided
     if (!display_order) {
         const getMaxOrderQuery = 'SELECT COALESCE(MAX(display_order), 0) as maxOrder FROM ads WHERE location = ?';
-        
+
         db.query(getMaxOrderQuery, [location], (err, results) => {
             if (err) {
                 return res.status(500).json({ error: err.message });
             }
-            
+
             const nextOrder = results[0].maxOrder + 1;
-            
+
             const query = 'INSERT INTO ads (title, image_path, location, is_active, display_order) VALUES (?, ?, ?, ?, ?)';
-            
+
             db.query(query, [
                 title,
                 imagePath,
@@ -1121,16 +1126,16 @@ app.post('/api/ads', upload.single('image'), (req, res) => {
                 if (err) {
                     return res.status(500).json({ error: err.message });
                 }
-                res.json({ 
-                    success: true, 
+                res.json({
+                    success: true,
                     message: 'Ad created successfully',
-                    adId: result.insertId 
+                    adId: result.insertId
                 });
             });
         });
     } else {
         const query = 'INSERT INTO ads (title, image_path, location, is_active, display_order) VALUES (?, ?, ?, ?, ?)';
-        
+
         db.query(query, [
             title,
             imagePath,
@@ -1141,10 +1146,10 @@ app.post('/api/ads', upload.single('image'), (req, res) => {
             if (err) {
                 return res.status(500).json({ error: err.message });
             }
-            res.json({ 
-                success: true, 
+            res.json({
+                success: true,
                 message: 'Ad created successfully',
-                adId: result.insertId 
+                adId: result.insertId
             });
         });
     }
@@ -1154,17 +1159,17 @@ app.post('/api/ads', upload.single('image'), (req, res) => {
 app.put('/api/ads/:id', upload.single('image'), (req, res) => {
     const { title, location, is_active, display_order } = req.body;
     const adId = req.params.id;
-    
+
     if (!title || !location) {
         return res.status(400).json({ error: 'Title and location are required' });
     }
-    
+
     // Convert checkbox value to boolean
     const isActive = is_active === 'on' || is_active === true || is_active === 'true';
-    
+
     // Check if new image was uploaded
     const newImage = req.file ? `/uploads/${req.file.filename}` : null;
-    
+
     if (newImage) {
         const query = 'UPDATE ads SET title=?, image_path=?, location=?, is_active=?, display_order=? WHERE id=?';
         db.query(query, [title, newImage, location, isActive, display_order, adId], (err, result) => {
@@ -1194,25 +1199,25 @@ app.put('/api/ads/:id', upload.single('image'), (req, res) => {
 app.delete('/api/ads/:id', (req, res) => {
     // Get image path before deleting to clean up file
     const getImageQuery = 'SELECT image_path FROM ads WHERE id = ?';
-    
+
     db.query(getImageQuery, [req.params.id], (err, results) => {
         if (err) {
             return res.status(500).json({ error: err.message });
         }
-        
+
         if (results.length === 0) {
             return res.status(404).json({ error: 'Ad not found' });
         }
-        
+
         const imagePath = results[0].image_path;
-        
+
         // Delete from database
         const deleteQuery = 'DELETE FROM ads WHERE id = ?';
         db.query(deleteQuery, [req.params.id], (err, result) => {
             if (err) {
                 return res.status(500).json({ error: err.message });
             }
-            
+
             // Try to delete the image file (optional - don't fail if file doesn't exist)
             if (imagePath && imagePath.startsWith('/uploads/')) {
                 const filePath = path.join(__dirname, imagePath);
@@ -1222,7 +1227,7 @@ app.delete('/api/ads/:id', (req, res) => {
                     }
                 });
             }
-            
+
             res.json({ success: true, message: 'Ad deleted successfully' });
         });
     });
@@ -1231,7 +1236,7 @@ app.delete('/api/ads/:id', (req, res) => {
 // Toggle ad status
 app.put('/api/ads/:id/toggle', (req, res) => {
     const query = 'UPDATE ads SET is_active = NOT is_active WHERE id = ?';
-    
+
     db.query(query, [req.params.id], (err, result) => {
         if (err) {
             return res.status(500).json({ error: err.message });
