@@ -2,11 +2,18 @@
 
 let messages = [];
 
-// Load messages from API
+// Load messages from Supabase
 async function loadMessages() {
     try {
-        const response = await fetch('http://localhost:3002/api/messages');
-        messages = await response.json();
+        console.log('📨 Loading messages from Supabase...');
+        const { data, error } = await supabase
+            .from('messages')
+            .select('*')
+            .order('created_at', { ascending: false });
+
+        if (error) throw error;
+
+        messages = data;
         renderMessages();
         updateMessageStats();
     } catch (error) {
@@ -19,7 +26,7 @@ async function loadMessages() {
 function renderMessages() {
     const container = document.getElementById('messagesTableBody');
     if (!container) return;
-    
+
     if (messages.length === 0) {
         container.innerHTML = `
             <tr>
@@ -30,17 +37,17 @@ function renderMessages() {
         `;
         return;
     }
-    
+
     container.innerHTML = messages.map(msg => {
         const date = new Date(msg.created_at);
-        const formattedDate = date.toLocaleDateString('en-IN', { 
-            year: 'numeric', 
-            month: 'short', 
+        const formattedDate = date.toLocaleDateString('en-IN', {
+            year: 'numeric',
+            month: 'short',
             day: 'numeric',
             hour: '2-digit',
             minute: '2-digit'
         });
-        
+
         return `
             <tr class="${msg.status === 'unread' ? 'unread-message' : ''}">
                 <td>${msg.id}</td>
@@ -94,10 +101,10 @@ function renderMessages() {
 function updateMessageStats() {
     const totalMessages = messages.length;
     const unreadMessages = messages.filter(m => m.status === 'unread').length;
-    
+
     const totalElement = document.getElementById('totalMessages');
     const unreadElement = document.getElementById('unreadMessages');
-    
+
     if (totalElement) totalElement.textContent = totalMessages;
     if (unreadElement) unreadElement.textContent = unreadMessages;
 }
@@ -106,19 +113,19 @@ function updateMessageStats() {
 function viewMessage(id) {
     const message = messages.find(m => m.id === id);
     if (!message) return;
-    
+
     const modal = document.getElementById('messageModal');
     if (!modal) return;
-    
+
     document.getElementById('viewMessageName').textContent = message.name;
     document.getElementById('viewMessageEmail').textContent = message.email;
     document.getElementById('viewMessagePhone').textContent = message.phone || 'Not provided';
     document.getElementById('viewMessageDate').textContent = new Date(message.created_at).toLocaleString('en-IN');
     document.getElementById('viewMessageContent').textContent = message.message;
-    
+
     modal.classList.add('active');
     modal.style.display = 'flex';
-    
+
     // Mark as read if unread
     if (message.status === 'unread') {
         markAsRead(id);
@@ -137,15 +144,14 @@ function closeMessageModal() {
 // Mark message as read
 async function markAsRead(id) {
     try {
-        const response = await fetch(`http://localhost:3002/api/messages/${id}/read`, {
-            method: 'PUT'
-        });
-        
-        const result = await response.json();
-        
-        if (result.success) {
-            loadMessages();
-        }
+        const { error } = await supabase
+            .from('messages')
+            .update({ status: 'read' })
+            .eq('id', id);
+
+        if (error) throw error;
+
+        loadMessages();
     } catch (error) {
         console.error('Error marking message as read:', error);
     }
@@ -155,18 +161,16 @@ async function markAsRead(id) {
 async function deleteMessage(id) {
     if (confirm('Are you sure you want to delete this message?\n\nThis action cannot be undone.')) {
         try {
-            const response = await fetch(`http://localhost:3002/api/messages/${id}`, {
-                method: 'DELETE'
-            });
-            
-            const result = await response.json();
-            
-            if (result.success) {
-                showMessageNotification('Message deleted successfully', 'success');
-                loadMessages();
-            } else {
-                showMessageNotification('Failed to delete message', 'error');
-            }
+            const { error } = await supabase
+                .from('messages')
+                .delete()
+                .eq('id', id);
+
+            if (error) throw error;
+
+            showMessageNotification('Message deleted successfully', 'success');
+            loadMessages();
+
         } catch (error) {
             console.error('Error deleting message:', error);
             showMessageNotification('Failed to delete message', 'error');
@@ -192,7 +196,7 @@ function showMessageNotification(message, type = 'info') {
         max-width: 400px;
         box-shadow: 0 4px 12px rgba(0,0,0,0.15);
     `;
-    
+
     // Set background color based on type
     const colors = {
         success: '#22c55e',
@@ -201,12 +205,12 @@ function showMessageNotification(message, type = 'info') {
         info: '#3b82f6'
     };
     notification.style.background = colors[type] || colors.info;
-    
+
     notification.textContent = message;
-    
+
     // Add to page
     document.body.appendChild(notification);
-    
+
     // Remove after 3 seconds
     setTimeout(() => {
         notification.style.animation = 'slideOut 0.3s ease';
@@ -233,16 +237,19 @@ if (!document.getElementById('message-notification-styles')) {
 
 // Filter messages
 function filterMessages(status) {
-    const buttons = document.querySelectorAll('.filter-btn');
-    buttons.forEach(btn => btn.classList.remove('active'));
-    event.target.classList.add('active');
-    
+    // Basic filter UI toggle
+    if (event && event.target) {
+        const buttons = document.querySelectorAll('.filter-btn');
+        buttons.forEach(btn => btn.classList.remove('active'));
+        event.target.classList.add('active');
+    }
+
     if (status === 'all') {
         renderMessages();
     } else {
         const filtered = messages.filter(m => m.status === status);
         const container = document.getElementById('messagesTableBody');
-        
+
         if (filtered.length === 0) {
             container.innerHTML = `
                 <tr>
@@ -253,18 +260,18 @@ function filterMessages(status) {
             `;
             return;
         }
-        
-        // Render filtered messages (similar to renderMessages but with filtered array)
+
+        // Render filtered messages (reuse render logic)
         container.innerHTML = filtered.map(msg => {
             const date = new Date(msg.created_at);
-            const formattedDate = date.toLocaleDateString('en-IN', { 
-                year: 'numeric', 
-                month: 'short', 
+            const formattedDate = date.toLocaleDateString('en-IN', {
+                year: 'numeric',
+                month: 'short',
                 day: 'numeric',
                 hour: '2-digit',
                 minute: '2-digit'
             });
-            
+
             return `
                 <tr class="${msg.status === 'unread' ? 'unread-message' : ''}">
                     <td>${msg.id}</td>

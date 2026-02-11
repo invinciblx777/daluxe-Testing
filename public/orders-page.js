@@ -3,28 +3,39 @@ let allOrders = [];
 let orderStats = { all: 0, pending: 0, shipped: 0, delivered: 0 };
 
 async function loadOrders() {
-    console.log('📦 Loading orders from API...');
+    console.log('📦 Loading orders from Supabase...');
     try {
-        const [ordersResponse, statsResponse] = await Promise.all([
-            fetch('http://localhost:3002/api/orders'),
-            fetch('http://localhost:3002/api/orders/stats/summary')
-        ]);
-        
-        console.log('📡 Orders response status:', ordersResponse.status);
-        console.log('📊 Stats response status:', statsResponse.status);
-        
-        allOrders = await ordersResponse.json();
-        orderStats = await statsResponse.json();
-        
+        const { data: orders, error } = await supabase
+            .from('orders')
+            .select('*, order_items(*)')
+            .order('created_at', { ascending: false });
+
+        if (error) throw error;
+
+        allOrders = orders.map(order => ({
+            ...order,
+            items: order.order_items || []
+        }));
+
         console.log('📋 Loaded orders:', allOrders.length);
-        console.log('📊 Order stats:', orderStats);
-        
+
+        calculateOrderStats();
         updateOrderStats();
         renderOrders(allOrders);
+
     } catch (error) {
         console.error('Error loading orders:', error);
         showNotification('Failed to load orders', 'error');
     }
+}
+
+function calculateOrderStats() {
+    orderStats = {
+        all: allOrders.length,
+        pending: allOrders.filter(o => o.status === 'Pending' || o.status === 'Processing').length,
+        shipped: allOrders.filter(o => o.status === 'Shipped').length,
+        delivered: allOrders.filter(o => o.status === 'Delivered').length
+    };
 }
 
 function updateOrderStats() {
@@ -37,34 +48,30 @@ function updateOrderStats() {
 function renderOrders(orders) {
     const tbody = document.getElementById('ordersTableBody');
     if (!tbody) return;
-    
+
     if (orders.length === 0) {
         tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 40px; color: var(--text-muted);">No orders found</td></tr>';
         return;
     }
-    
+
     tbody.innerHTML = orders.map(order => {
-        const statusClass = order.status.toLowerCase().replace(' ', '-');
-        const paymentClass = order.payment_status.toLowerCase();
-        const date = new Date(order.order_date);
+        const statusClass = (order.status || 'Pending').toLowerCase().replace(' ', '-');
+        const paymentClass = (order.payment_status || 'Pending').toLowerCase();
+
+        // Handle dates: Supabase uses created_at
+        const dateVal = order.created_at || order.order_date;
+        const date = new Date(dateVal);
         const formattedDate = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-        
-        // Parse items JSON to get product count
-        let itemsCount = 1;
-        try {
-            if (order.items) {
-                const items = typeof order.items === 'string' ? JSON.parse(order.items) : order.items;
-                if (Array.isArray(items) && items.length > 0) {
-                    itemsCount = items.reduce((total, item) => total + (item.quantity || 0), 0);
-                }
-            }
-        } catch (e) {
-            console.error('Error parsing order items:', e);
+
+        let itemsCount = 0;
+        if (order.items && Array.isArray(order.items)) {
+            itemsCount = order.items.reduce((total, item) => total + (item.quantity || 0), 0);
         }
-        
+
         // Generate customer avatar from name
-        const customerAvatar = order.customer_name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
-        
+        const customerName = order.customer_name || 'Guest';
+        const customerAvatar = customerName.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+
         return `
             <tr class="order-row">
                 <td>
@@ -74,7 +81,7 @@ function renderOrders(orders) {
                     <div class="customer-cell">
                         <div class="customer-avatar">${customerAvatar}</div>
                         <div class="customer-info">
-                            <div class="customer-name">${order.customer_name}</div>
+                            <div class="customer-name">${customerName}</div>
                             <div class="customer-email">${order.customer_email || order.customer_phone}</div>
                         </div>
                     </div>
@@ -95,10 +102,10 @@ function renderOrders(orders) {
                     </div>
                 </td>
                 <td>
-                    <span class="order-status-badge ${statusClass}">${order.status}</span>
+                    <span class="order-status-badge ${statusClass}">${order.status || 'Pending'}</span>
                 </td>
                 <td>
-                    <span class="payment-badge ${paymentClass}">${order.payment_status}</span>
+                    <span class="payment-badge ${paymentClass}">${order.payment_status || 'Pending'}</span>
                 </td>
                 <td>
                     <div class="order-date">${formattedDate}</div>
@@ -129,22 +136,22 @@ function filterOrders(status) {
         tab.classList.remove('active');
     });
     event.target.classList.add('active');
-    
+
     if (status === 'all') {
         renderOrders(allOrders);
     } else {
-        const filtered = allOrders.filter(order => order.status.toLowerCase() === status.toLowerCase());
+        const filtered = allOrders.filter(order => (order.status || '').toLowerCase() === status.toLowerCase());
         renderOrders(filtered);
     }
 }
 
 function searchOrders() {
     const searchTerm = document.getElementById('orderSearch').value.toLowerCase();
-    const filtered = allOrders.filter(order => 
-        order.order_id.toLowerCase().includes(searchTerm) ||
-        order.customer_name.toLowerCase().includes(searchTerm) ||
+    const filtered = allOrders.filter(order =>
+        (order.order_id && order.order_id.toLowerCase().includes(searchTerm)) ||
+        (order.customer_name && order.customer_name.toLowerCase().includes(searchTerm)) ||
         (order.customer_email && order.customer_email.toLowerCase().includes(searchTerm)) ||
-        order.customer_phone.toLowerCase().includes(searchTerm)
+        (order.customer_phone && order.customer_phone.toLowerCase().includes(searchTerm))
     );
     renderOrders(filtered);
 }
@@ -155,43 +162,30 @@ function viewOrder(orderId) {
         showNotification('Order not found', 'error');
         return;
     }
-    
-    // Parse items
-    let items = [];
-    try {
-        items = typeof order.items === 'string' ? JSON.parse(order.items) : order.items;
-    } catch (e) {
-        console.error('Error parsing order items:', e);
-        items = [];
-    }
-    
+
+    // Items are already parsed and attached in loadOrders
+    const items = order.items || [];
+
     const itemsHtml = items.map(item => `
         <div class="order-item-row">
             <div class="item-info">
-                <div class="item-name">${item.productName}</div>
-                <div class="item-id">Product ID: #${item.productId}</div>
+                <div class="item-name">${item.product_name}</div>
+                <div class="item-id">Product ID: #${item.product_id}</div>
             </div>
             <div class="item-quantity">Qty: ${item.quantity}</div>
-            <div class="item-price">₹${item.price.toLocaleString('en-IN')}</div>
-            <div class="item-total">₹${item.total.toLocaleString('en-IN')}</div>
+            <div class="item-price">₹${parseFloat(item.price).toLocaleString('en-IN')}</div>
+            <div class="item-total">₹${(item.quantity * parseFloat(item.price)).toLocaleString('en-IN')}</div>
         </div>
     `).join('');
-    
-    const orderDate = new Date(order.order_date).toLocaleDateString('en-IN', {
+
+    const orderDate = new Date(order.created_at || order.order_date).toLocaleDateString('en-IN', {
         year: 'numeric',
         month: 'long',
         day: 'numeric',
         hour: '2-digit',
         minute: '2-digit'
     });
-    
-    const expectedDelivery = order.expected_delivery ? 
-        new Date(order.expected_delivery).toLocaleDateString('en-IN', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric'
-        }) : 'Not specified';
-    
+
     // Create modal
     const modal = document.createElement('div');
     modal.className = 'modal active';
@@ -225,7 +219,7 @@ function viewOrder(orderId) {
                                 </div>
                                 <div class="customer-address">
                                     <strong>Delivery Address:</strong><br>
-                                    ${order.delivery_address}
+                                    ${order.shipping_address || order.delivery_address || 'N/A'}
                                 </div>
                             </div>
                         </div>
@@ -256,10 +250,6 @@ function viewOrder(orderId) {
                             <div class="info-item">
                                 <span class="info-label">Payment Status:</span>
                                 <span class="payment-badge ${order.payment_status.toLowerCase()}">${order.payment_status}</span>
-                            </div>
-                            <div class="info-item">
-                                <span class="info-label">Expected Delivery:</span>
-                                <span class="info-value">${expectedDelivery}</span>
                             </div>
                         </div>
                     </div>
@@ -297,25 +287,6 @@ function viewOrder(orderId) {
                     </h3>
                     <div class="billing-card">
                         <div class="billing-row">
-                            <span>Items Subtotal:</span>
-                            <span>₹${parseFloat(order.subtotal).toLocaleString('en-IN')}</span>
-                        </div>
-                        <div class="billing-row">
-                            <span>Delivery Charges:</span>
-                            <span>${parseFloat(order.delivery_charge) === 0 ? 'FREE' : '₹' + parseFloat(order.delivery_charge).toLocaleString('en-IN')}</span>
-                        </div>
-                        <div class="billing-row">
-                            <span>Tax (GST 18%):</span>
-                            <span>₹${parseFloat(order.tax).toLocaleString('en-IN')}</span>
-                        </div>
-                        ${parseFloat(order.discount) > 0 ? `
-                        <div class="billing-row discount">
-                            <span>Discount Applied:</span>
-                            <span>-₹${parseFloat(order.discount).toLocaleString('en-IN')}</span>
-                        </div>
-                        ` : ''}
-                        <div class="billing-divider"></div>
-                        <div class="billing-row total">
                             <span>Total Amount:</span>
                             <span>₹${parseFloat(order.total_amount).toLocaleString('en-IN')}</span>
                         </div>
@@ -341,31 +312,21 @@ function viewOrder(orderId) {
             </div>
         </div>
     `;
-    
+
     document.body.appendChild(modal);
-    
+
     // Close modal handlers
     modal.querySelector('.modal-close').onclick = () => modal.remove();
     modal.querySelector('.modal-backdrop').onclick = () => modal.remove();
-    
-    // Escape key handler
-    const escapeHandler = (e) => {
-        if (e.key === 'Escape') {
-            modal.remove();
-            document.removeEventListener('keydown', escapeHandler);
-        }
-    };
-    document.addEventListener('keydown', escapeHandler);
 }
 
-// Print order function
 function printOrder(orderId) {
     showNotification('Print functionality - Coming soon', 'info');
 }
 
 function showOrderMenu(orderId, event) {
     event.stopPropagation();
-    
+
     const menu = document.createElement('div');
     menu.className = 'context-menu';
     menu.innerHTML = `
@@ -375,16 +336,15 @@ function showOrderMenu(orderId, event) {
         <div class="context-menu-divider"></div>
         <div class="context-menu-item danger" onclick="deleteOrder(${orderId})">Delete Order</div>
     `;
-    
+
     // Position menu
     const rect = event.target.getBoundingClientRect();
     menu.style.position = 'fixed';
     menu.style.top = rect.bottom + 5 + 'px';
     menu.style.left = rect.left - 150 + 'px';
-    
+
     document.body.appendChild(menu);
-    
-    // Close menu on click outside
+
     setTimeout(() => {
         document.addEventListener('click', function closeMenu() {
             menu.remove();
@@ -395,37 +355,27 @@ function showOrderMenu(orderId, event) {
 
 async function updateOrderStatus(orderId, newStatus) {
     try {
-        // Get the order details first to check payment method
-        const orderResponse = await fetch(`http://localhost:3002/api/orders/${orderId}`);
-        const order = await orderResponse.json();
-        
-        // Determine payment status
-        let paymentStatus = order.payment_status;
-        
         // If order is delivered and payment method is COD, mark as Completed
+        const order = allOrders.find(o => o.id === orderId);
+        let paymentStatus = order.payment_status;
+
         if (newStatus === 'Delivered' && order.payment_method.toLowerCase() === 'cod') {
-            paymentStatus = 'Completed';
-        } else if (newStatus === 'Delivered') {
-            paymentStatus = 'Paid';
+            paymentStatus = 'Completed'; // or Paid
         }
-        
-        const response = await fetch(`http://localhost:3002/api/orders/${orderId}/status`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ 
+
+        const { error } = await supabase
+            .from('orders')
+            .update({
                 status: newStatus,
                 payment_status: paymentStatus
             })
-        });
-        
-        const result = await response.json();
-        
-        if (result.success) {
-            showNotification('Order status updated successfully', 'success');
-            loadOrders();
-        } else {
-            showNotification('Failed to update order status', 'error');
-        }
+            .eq('id', orderId);
+
+        if (error) throw error;
+
+        showNotification('Order status updated successfully', 'success');
+        loadOrders(); // Reload to refresh UI and calculations
+
     } catch (error) {
         console.error('Error updating order:', error);
         showNotification('Failed to update order status', 'error');
@@ -434,20 +384,18 @@ async function updateOrderStatus(orderId, newStatus) {
 
 async function deleteOrder(orderId) {
     if (!confirm('Are you sure you want to delete this order?')) return;
-    
+
     try {
-        const response = await fetch(`http://localhost:3002/api/orders/${orderId}`, {
-            method: 'DELETE'
-        });
-        
-        const result = await response.json();
-        
-        if (result.success) {
-            showNotification('Order deleted successfully', 'success');
-            loadOrders();
-        } else {
-            showNotification('Failed to delete order', 'error');
-        }
+        const { error } = await supabase
+            .from('orders')
+            .delete()
+            .eq('id', orderId);
+
+        if (error) throw error;
+
+        showNotification('Order deleted successfully', 'success');
+        loadOrders();
+
     } catch (error) {
         console.error('Error deleting order:', error);
         showNotification('Failed to delete order', 'error');
@@ -455,196 +403,23 @@ async function deleteOrder(orderId) {
 }
 
 function exportOrders() {
-    // Show export options
-    const menu = document.createElement('div');
-    menu.className = 'context-menu';
-    menu.style.position = 'fixed';
-    menu.style.top = '100px';
-    menu.style.right = '24px';
-    menu.innerHTML = `
-        <div class="context-menu-item" onclick="exportOrdersToPDF()">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 8px;">
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                <polyline points="14,2 14,8 20,8"/>
-            </svg>
-            Export as PDF
-        </div>
-        <div class="context-menu-item" onclick="exportOrdersToExcel()">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 8px;">
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                <polyline points="14,2 14,8 20,8"/>
-            </svg>
-            Export as Excel
-        </div>
-    `;
-    
-    document.body.appendChild(menu);
-    
-    // Close menu on click outside
-    setTimeout(() => {
-        document.addEventListener('click', function closeMenu() {
-            menu.remove();
-            document.removeEventListener('click', closeMenu);
-        });
-    }, 100);
+    showNotification('Export functionality - Coming soon with Supabase', 'info');
+    // Implement standard CSV export from allOrders array
 }
 
-function exportOrdersToPDF() {
-    // Create PDF-ready HTML content
-    const content = `
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <meta charset="UTF-8">
-            <title>Orders Report - DALUXE</title>
-            <style>
-                @media print {
-                    @page { margin: 1cm; }
-                    body { margin: 0; }
-                }
-                body { 
-                    font-family: Arial, sans-serif; 
-                    padding: 20px;
-                    max-width: 1200px;
-                    margin: 0 auto;
-                }
-                h1 { 
-                    color: #d4a574; 
-                    text-align: center;
-                    margin-bottom: 10px;
-                }
-                .report-info {
-                    text-align: center;
-                    color: #666;
-                    margin-bottom: 30px;
-                }
-                table { 
-                    width: 100%; 
-                    border-collapse: collapse; 
-                    margin-top: 20px; 
-                }
-                th, td { 
-                    border: 1px solid #ddd; 
-                    padding: 12px; 
-                    text-align: left;
-                    font-size: 12px;
-                }
-                th { 
-                    background-color: #d4a574; 
-                    color: white;
-                    font-weight: 600;
-                }
-                tr:nth-child(even) { 
-                    background-color: #f9f9f9; 
-                }
-                .total-row {
-                    font-weight: bold;
-                    background-color: #f0f0f0 !important;
-                }
-            </style>
-        </head>
-        <body>
-            <h1>DALUXE - Orders Report</h1>
-            <div class="report-info">
-                <p>Generated on: ${new Date().toLocaleString('en-IN')}</p>
-                <p>Total Orders: ${allOrders.length}</p>
-            </div>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Order ID</th>
-                        <th>Customer</th>
-                        <th>Phone</th>
-                        <th>Total Amount</th>
-                        <th>Status</th>
-                        <th>Payment</th>
-                        <th>Method</th>
-                        <th>Date</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    ${allOrders.map(order => `
-                        <tr>
-                            <td>${order.order_id}</td>
-                            <td>${order.customer_name}</td>
-                            <td>${order.customer_phone}</td>
-                            <td>₹${parseFloat(order.total_amount).toLocaleString('en-IN')}</td>
-                            <td>${order.status}</td>
-                            <td>${order.payment_status}</td>
-                            <td>${order.payment_method}</td>
-                            <td>${new Date(order.order_date).toLocaleDateString('en-IN')}</td>
-                        </tr>
-                    `).join('')}
-                    <tr class="total-row">
-                        <td colspan="3">TOTAL</td>
-                        <td>₹${allOrders.reduce((sum, o) => sum + parseFloat(o.total_amount), 0).toLocaleString('en-IN')}</td>
-                        <td colspan="4">${allOrders.length} Orders</td>
-                    </tr>
-                </tbody>
-            </table>
-            <script>
-                // Auto-print when opened
-                window.onload = function() {
-                    window.print();
-                };
-            </script>
-        </body>
-        </html>
-    `;
-    
-    // Create blob and download as HTML (can be saved as PDF using browser's print to PDF)
-    const blob = new Blob([content], { type: 'text/html' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `orders_report_${new Date().toISOString().split('T')[0]}.html`;
-    link.style.display = 'none';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
-    
-    // Also open in new window for immediate printing
-    const printWindow = window.open('', '_blank');
-    printWindow.document.write(content);
-    printWindow.document.close();
-    
-    showNotification('PDF report downloaded. Use browser Print to PDF option.', 'success');
-}
+// Payment Filter Function
+function filterOrdersByPayment() {
+    const paymentFilter = document.getElementById('paymentFilter')?.value || 'all';
 
-function exportOrdersToExcel() {
-    // Create CSV content
-    const headers = ['Order ID', 'Customer Name', 'Phone', 'Email', 'Total Amount', 'Status', 'Payment Status', 'Payment Method', 'Order Date'];
-    const rows = allOrders.map(order => [
-        order.order_id,
-        order.customer_name,
-        order.customer_phone,
-        order.customer_email || '',
-        parseFloat(order.total_amount).toFixed(2),
-        order.status,
-        order.payment_status,
-        order.payment_method,
-        new Date(order.order_date).toLocaleDateString('en-IN')
-    ]);
-    
-    // Convert to CSV
-    const csvContent = [
-        headers.join(','),
-        ...rows.map(row => row.map(cell => `"${cell}"`).join(','))
-    ].join('\n');
-    
-    // Create download link
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement('a');
-    const url = URL.createObjectURL(blob);
-    link.setAttribute('href', url);
-    link.setAttribute('download', `orders_${new Date().toISOString().split('T')[0]}.csv`);
-    link.style.visibility = 'hidden';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    
-    showNotification('Excel file downloaded successfully', 'success');
+    let filtered = allOrders;
+
+    if (paymentFilter !== 'all') {
+        filtered = allOrders.filter(order =>
+            order.payment_method.toLowerCase() === paymentFilter.toLowerCase()
+        );
+    }
+
+    renderOrders(filtered);
 }
 
 // Make functions globally available
@@ -656,8 +431,7 @@ window.showOrderMenu = showOrderMenu;
 window.updateOrderStatus = updateOrderStatus;
 window.deleteOrder = deleteOrder;
 window.exportOrders = exportOrders;
-window.exportOrdersToPDF = exportOrdersToPDF;
-window.exportOrdersToExcel = exportOrdersToExcel;
+window.filterOrdersByPayment = filterOrdersByPayment;
 window.printOrder = printOrder;
 
 // Initialize when orders page loads
@@ -665,22 +439,3 @@ if (window.location.hash === '#orders' || document.getElementById('ordersTableBo
     console.log('🔄 Orders page detected, loading orders...');
     loadOrders();
 }
-
-
-// Payment Filter Function
-function filterOrdersByPayment() {
-    const paymentFilter = document.getElementById('paymentFilter')?.value || 'all';
-    
-    let filtered = allOrders;
-    
-    if (paymentFilter !== 'all') {
-        filtered = allOrders.filter(order => 
-            order.payment_method.toLowerCase() === paymentFilter.toLowerCase()
-        );
-    }
-    
-    renderOrders(filtered);
-}
-
-// Make function globally available
-window.filterOrdersByPayment = filterOrdersByPayment;

@@ -3,12 +3,16 @@ let allPayments = [];
 
 async function loadPayments() {
     try {
-        console.log('💳 Loading payments from orders...');
-        
-        // Get all orders and extract payment information
-        const ordersResponse = await fetch('http://localhost:3002/api/orders');
-        const orders = await ordersResponse.json();
-        
+        console.log('💳 Loading payments from Supabase (orders)...');
+
+        // Fetch all orders from Supabase
+        const { data: orders, error } = await supabase
+            .from('orders')
+            .select('order_id, customer_name, payment_method, total_amount, payment_status, created_at, order_date')
+            .order('created_at', { ascending: false });
+
+        if (error) throw error;
+
         // Transform orders into payment records
         allPayments = orders.map(order => ({
             orderId: order.order_id,
@@ -16,15 +20,15 @@ async function loadPayments() {
             paymentMethod: order.payment_method,
             amount: parseFloat(order.total_amount),
             status: order.payment_status,
-            date: order.order_date
+            date: order.created_at || order.order_date
         }));
-        
+
         console.log('💳 Loaded payments:', allPayments.length);
         renderPayments(allPayments);
-        
+
     } catch (error) {
         console.error('Error loading payments:', error);
-        document.getElementById('paymentsTableBody').innerHTML = 
+        document.getElementById('paymentsTableBody').innerHTML =
             '<tr><td colspan="6" style="text-align: center; padding: 40px; color: red;">Failed to load payments</td></tr>';
     }
 }
@@ -32,17 +36,21 @@ async function loadPayments() {
 function renderPayments(payments) {
     const tbody = document.getElementById('paymentsTableBody');
     if (!tbody) return;
-    
+
     if (payments.length === 0) {
         tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 40px;">No payments found</td></tr>';
         return;
     }
-    
+
     tbody.innerHTML = payments.map(payment => {
-        const date = new Date(payment.date).toLocaleDateString('en-IN');
+        const date = new Date(payment.date).toLocaleDateString('en-IN', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+        });
         const statusClass = (payment.status || 'pending').toLowerCase();
         const paymentMethod = payment.paymentMethod || 'N/A';
-        
+
         return `
             <tr>
                 <td>${payment.orderId || 'N/A'}</td>
@@ -68,12 +76,12 @@ function filterPayments(method) {
         tab.classList.remove('active');
     });
     event.target.classList.add('active');
-    
+
     if (method === 'all') {
         renderPayments(allPayments);
     } else {
-        const filtered = allPayments.filter(payment => 
-            payment.paymentMethod.toLowerCase() === method.toLowerCase()
+        const filtered = allPayments.filter(payment =>
+            (payment.paymentMethod || '').toLowerCase() === method.toLowerCase()
         );
         renderPayments(filtered);
     }

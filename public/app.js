@@ -18,18 +18,18 @@ function loadSavedPage() {
 function navigateToPage(pageId) {
     // Hide all pages
     pages.forEach(page => page.classList.remove('active'));
-    
+
     // Show selected page
     const targetPage = document.getElementById(pageId);
     if (targetPage) {
         targetPage.classList.add('active');
         saveCurrentPage(pageId);
     }
-    
+
     // Show/hide ad banners based on page
     const homeBanners = document.getElementById('homeBanners');
     const productBanners = document.getElementById('productBanners');
-    
+
     if (homeBanners && productBanners) {
         if (pageId === 'hero-page') {
             homeBanners.style.display = 'block';
@@ -42,7 +42,7 @@ function navigateToPage(pageId) {
             productBanners.style.display = 'none';
         }
     }
-    
+
     // Scroll to top
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
@@ -60,7 +60,7 @@ navLinks.forEach(link => {
 });
 
 // Add click listeners to all footer links with data-page attribute
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     const footerLinks = document.querySelectorAll('.footer-links a[data-page]');
     footerLinks.forEach(link => {
         link.addEventListener('click', (e) => {
@@ -69,7 +69,7 @@ document.addEventListener('DOMContentLoaded', function() {
             navigateToPage(pageId);
         });
     });
-    
+
     // Initialize mobile navigation
     initMobileNavigation();
 });
@@ -81,41 +81,41 @@ function initMobileNavigation() {
     const mobileNavs = document.querySelectorAll('.nav');
     const mobileNavOverlays = document.querySelectorAll('[id^="mobileNavOverlay"]');
     const navLinks = document.querySelectorAll('.nav a');
-    
+
     // Add event listeners to all mobile nav toggles
     mobileNavToggles.forEach((toggle, index) => {
         if (toggle) {
-            toggle.addEventListener('click', function() {
+            toggle.addEventListener('click', function () {
                 toggleMobileNav(index + 1);
             });
         }
     });
-    
+
     // Close mobile nav when overlay is clicked
     mobileNavOverlays.forEach((overlay, index) => {
         if (overlay) {
-            overlay.addEventListener('click', function() {
+            overlay.addEventListener('click', function () {
                 closeMobileNav(index + 1);
             });
         }
     });
-    
+
     // Close mobile nav when a link is clicked
     navLinks.forEach(link => {
-        link.addEventListener('click', function() {
+        link.addEventListener('click', function () {
             closeAllMobileNavs();
         });
     });
-    
+
     // Close mobile nav on escape key
-    document.addEventListener('keydown', function(e) {
+    document.addEventListener('keydown', function (e) {
         if (e.key === 'Escape') {
             closeAllMobileNavs();
         }
     });
-    
+
     // Close mobile nav on window resize if screen becomes larger
-    window.addEventListener('resize', function() {
+    window.addEventListener('resize', function () {
         if (window.innerWidth > 768) {
             closeAllMobileNavs();
         }
@@ -125,7 +125,7 @@ function initMobileNavigation() {
 function toggleMobileNav(pageIndex = 1) {
     const mobileNavId = pageIndex === 1 ? 'mobileNav' : `mobileNav${pageIndex}`;
     const mobileNav = document.getElementById(mobileNavId) || document.querySelector('.nav');
-    
+
     if (mobileNav && mobileNav.classList.contains('active')) {
         closeMobileNav(pageIndex);
     } else {
@@ -136,19 +136,19 @@ function toggleMobileNav(pageIndex = 1) {
 function openMobileNav(pageIndex = 1) {
     const mobileNavToggleId = pageIndex === 1 ? 'mobileNavToggle' : `mobileNavToggle${pageIndex}`;
     const mobileNavOverlayId = pageIndex === 1 ? 'mobileNavOverlay' : `mobileNavOverlay${pageIndex}`;
-    
+
     const mobileNav = document.querySelector('.page.active .nav');
     const mobileNavOverlay = document.getElementById(mobileNavOverlayId);
     const mobileNavToggle = document.getElementById(mobileNavToggleId);
-    
+
     if (mobileNav) {
         mobileNav.classList.add('active');
     }
-    
+
     if (mobileNavOverlay) {
         mobileNavOverlay.style.display = 'block';
     }
-    
+
     if (mobileNavToggle) {
         // Change hamburger to X
         mobileNavToggle.innerHTML = `
@@ -158,7 +158,7 @@ function openMobileNav(pageIndex = 1) {
             </svg>
         `;
     }
-    
+
     // Prevent body scroll
     document.body.style.overflow = 'hidden';
 }
@@ -166,19 +166,19 @@ function openMobileNav(pageIndex = 1) {
 function closeMobileNav(pageIndex = 1) {
     const mobileNavToggleId = pageIndex === 1 ? 'mobileNavToggle' : `mobileNavToggle${pageIndex}`;
     const mobileNavOverlayId = pageIndex === 1 ? 'mobileNavOverlay' : `mobileNavOverlay${pageIndex}`;
-    
+
     const mobileNav = document.querySelector('.page.active .nav');
     const mobileNavOverlay = document.getElementById(mobileNavOverlayId);
     const mobileNavToggle = document.getElementById(mobileNavToggleId);
-    
+
     if (mobileNav) {
         mobileNav.classList.remove('active');
     }
-    
+
     if (mobileNavOverlay) {
         mobileNavOverlay.style.display = 'none';
     }
-    
+
     if (mobileNavToggle) {
         // Change X back to hamburger
         mobileNavToggle.innerHTML = `
@@ -189,7 +189,7 @@ function closeMobileNav(pageIndex = 1) {
             </svg>
         `;
     }
-    
+
     // Restore body scroll
     document.body.style.overflow = '';
 }
@@ -214,14 +214,35 @@ productCards.forEach(card => {
         // Don't open modal if clicking "Add to cart" button
         if (!e.target.classList.contains('add-to-cart-btn')) {
             const productId = card.getAttribute('data-product');
-            
-            // Fetch product details from API
+
+            // Fetch product details from Supabase
             try {
-                const response = await fetch(`http://localhost:3002/api/products/${productId}`);
-                const product = await response.json();
-                
+                // Fetch product details
+                const { data: product, error } = await supabase
+                    .from('products')
+                    .select('*, product_images(*)')
+                    .eq('id', productId)
+                    .single();
+
+                if (error) throw error;
+
+                // Transform data for compatibility
+                let mainImage = 'placeholder-product.png';
+                if (product.image) {
+                    mainImage = product.image;
+                } else if (product.product_images && product.product_images.length > 0) {
+                    const main = product.product_images.find(img => img.is_main) || product.product_images[0];
+                    mainImage = main.image_path;
+                }
+
+                const formattedProduct = {
+                    ...product,
+                    image: mainImage,
+                    images: product.product_images // Keep raw images if needed
+                };
+
                 // Update modal content with product data
-                updateProductModal(product);
+                updateProductModal(formattedProduct);
                 openModal(productModal);
             } catch (error) {
                 console.error('Error loading product:', error);
@@ -283,7 +304,7 @@ qtyBtns.forEach(btn => {
     btn.addEventListener('click', (e) => {
         const parent = btn.closest('.quantity-controls') || btn.closest('.cart-item-quantity');
         const input = parent.querySelector('.qty-input') || parent.querySelector('span');
-        
+
         if (btn.classList.contains('plus')) {
             if (input.tagName === 'INPUT') {
                 input.value = parseInt(input.value) + 1;
@@ -300,7 +321,7 @@ qtyBtns.forEach(btn => {
                 }
             }
         }
-        
+
         updateCartTotal();
     });
 });
@@ -324,9 +345,9 @@ function showNotification(message) {
         animation: slideIn 0.3s ease;
         box-shadow: 0 4px 15px rgba(224, 166, 67, 0.5);
     `;
-    
+
     document.body.appendChild(notification);
-    
+
     setTimeout(() => {
         notification.style.animation = 'slideOut 0.3s ease';
         setTimeout(() => {
@@ -368,7 +389,7 @@ filterBtns.forEach(btn => {
     btn.addEventListener('click', () => {
         filterBtns.forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
-        
+
         // Here you would filter products based on the selected category
         showNotification(`Showing ${btn.textContent}`);
     });
@@ -387,12 +408,12 @@ const contactForm = document.getElementById('contactForm');
 if (contactForm) {
     contactForm.addEventListener('submit', (e) => {
         e.preventDefault();
-        
+
         const formData = new FormData(contactForm);
         const data = Object.fromEntries(formData);
-        
+
         console.log('Form submitted:', data);
-        
+
         showNotification('Message sent successfully!');
         contactForm.reset();
     });
@@ -406,7 +427,7 @@ thumbnails.forEach((thumbnail, index) => {
     thumbnail.addEventListener('click', () => {
         thumbnails.forEach(t => t.classList.remove('active'));
         thumbnail.classList.add('active');
-        
+
         // Change main image (in a real app, you'd update with actual images)
         mainImage.style.opacity = '0';
         setTimeout(() => {
@@ -436,7 +457,7 @@ productCards.forEach(card => {
     card.addEventListener('mouseenter', () => {
         card.style.transform = 'translateY(-5px)';
     });
-    
+
     card.addEventListener('mouseleave', () => {
         card.style.transform = 'translateY(0)';
     });
@@ -450,7 +471,7 @@ if (proceedBtn) {
             showNotification('Your cart is empty!');
             return;
         }
-        
+
         showNotification('Proceeding to checkout...');
         // In a real app, this would redirect to a checkout page
         console.log('Checkout with items:', cartItems);
@@ -459,16 +480,16 @@ if (proceedBtn) {
 
 function updateProductModal(product) {
     const modal = document.getElementById('product-modal');
-    
+
     // Update product name
     const nameElement = modal.querySelector('.product-details h2');
     if (nameElement) nameElement.textContent = product.name;
-    
+
     // Calculate pricing with offers
     const hasOffer = product.offer_percentage && product.offer_percentage > 0;
     const originalPrice = parseFloat(product.price);
     const discountedPrice = hasOffer ? originalPrice * (1 - product.offer_percentage / 100) : originalPrice;
-    
+
     // Update product price with offer support
     const priceElement = modal.querySelector('.product-price');
     if (priceElement) {
@@ -482,11 +503,11 @@ function updateProductModal(product) {
             priceElement.textContent = `₹${discountedPrice.toLocaleString('en-IN')}`;
         }
     }
-    
+
     // Update rating
     const ratingElement = modal.querySelector('.product-rating span');
     if (ratingElement) ratingElement.textContent = `(${product.rating || 0}/5)`;
-    
+
     // Update stock status
     const stockElement = modal.querySelector('.stock-status');
     if (stockElement) {
@@ -501,34 +522,34 @@ function updateProductModal(product) {
             stockElement.style.color = '#28a745';
         }
     }
-    
+
     // Setup image gallery with navigation
     let currentImageIndex = 0;
     let productImages = [];
-    
+
     if (product.images && product.images.length > 0) {
         productImages = product.images;
     } else if (product.image) {
         productImages = [{ image_path: product.image, is_main: true }];
     }
-    
+
     const mainImage = modal.querySelector('.main-image');
     const prevBtn = document.getElementById('prevImageBtn');
     const nextBtn = document.getElementById('nextImageBtn');
     const indicator = document.getElementById('imageIndicator');
-    
+
     function updateImage() {
         if (mainImage && productImages.length > 0) {
-            mainImage.style.backgroundImage = `url('http://localhost:3002${productImages[currentImageIndex].image_path}')`;
+            mainImage.style.backgroundImage = `url('${productImages[currentImageIndex].image_path || '/placeholder-product.png'}')`;
             mainImage.style.backgroundSize = 'cover';
             mainImage.style.backgroundPosition = 'center';
         }
-        
+
         // Update indicator
         if (indicator) {
             indicator.textContent = `${currentImageIndex + 1} / ${productImages.length}`;
         }
-        
+
         // Show/hide buttons based on number of images
         if (prevBtn) {
             prevBtn.style.display = productImages.length > 1 ? 'flex' : 'none';
@@ -536,22 +557,22 @@ function updateProductModal(product) {
         if (nextBtn) {
             nextBtn.style.display = productImages.length > 1 ? 'flex' : 'none';
         }
-        
+
         // Hide indicator if only one image
         if (indicator) {
             indicator.style.display = productImages.length > 1 ? 'block' : 'none';
         }
     }
-    
+
     // Initialize
     updateImage();
-    
+
     // Remove old event listeners
     const newPrevBtn = prevBtn.cloneNode(true);
     const newNextBtn = nextBtn.cloneNode(true);
     prevBtn.parentNode.replaceChild(newPrevBtn, prevBtn);
     nextBtn.parentNode.replaceChild(newNextBtn, nextBtn);
-    
+
     // Add new event listeners with looping
     newPrevBtn.addEventListener('click', () => {
         if (productImages.length > 1) {
@@ -559,14 +580,14 @@ function updateProductModal(product) {
             updateImage();
         }
     });
-    
+
     newNextBtn.addEventListener('click', () => {
         if (productImages.length > 1) {
             currentImageIndex = currentImageIndex === productImages.length - 1 ? 0 : currentImageIndex + 1;
             updateImage();
         }
     });
-    
+
     // Keyboard navigation with looping
     const handleKeyPress = (e) => {
         if (modal.classList.contains('active') && productImages.length > 1) {
@@ -579,55 +600,55 @@ function updateProductModal(product) {
             }
         }
     };
-    
+
     document.removeEventListener('keydown', handleKeyPress);
     document.addEventListener('keydown', handleKeyPress);
-    
+
     // Update description
     const descElement = modal.querySelector('.product-description p');
     if (descElement && product.description) {
         descElement.textContent = product.description;
     }
-    
+
     // Update benefits
     const benefitsList = modal.querySelector('.product-description ul');
     if (benefitsList && product.benefits) {
         const benefits = product.benefits.split(',').map(b => b.trim()).filter(b => b);
         benefitsList.innerHTML = benefits.map(benefit => `<li>${benefit}</li>`).join('');
     }
-    
+
     // Update wishlist button
     const wishlistBtn = modal.querySelector('.wishlist-btn');
     if (wishlistBtn && typeof updateWishlistButton === 'function') {
         updateWishlistButton(product.id);
-        
+
         // Remove old event listener and add new one
         const newWishlistBtn = wishlistBtn.cloneNode(true);
         wishlistBtn.parentNode.replaceChild(newWishlistBtn, wishlistBtn);
-        
+
         newWishlistBtn.addEventListener('click', () => {
             if (typeof handleWishlistButtonClick === 'function') {
                 handleWishlistButtonClick(product);
             }
         });
     }
-    
+
     // Update Add to Cart button
     const addToCartBtn = modal.querySelector('.add-to-cart-btn.large');
     if (addToCartBtn) {
         // Remove old event listener and add new one
         const newAddToCartBtn = addToCartBtn.cloneNode(true);
         addToCartBtn.parentNode.replaceChild(newAddToCartBtn, addToCartBtn);
-        
+
         newAddToCartBtn.addEventListener('click', () => {
             const quantityInput = modal.querySelector('.qty-input');
             const quantity = quantityInput ? parseInt(quantityInput.value) || 1 : 1;
-            
+
             // Add the specified quantity to cart
             for (let i = 0; i < quantity; i++) {
                 addToCart(product.id);
             }
-            
+
             // Close modal after adding to cart
             closeProductModal();
         });
@@ -637,21 +658,21 @@ function updateProductModal(product) {
 // Fallback function for basic product info
 function updateProductModalBasic(productId, productName, productPrice) {
     const modal = document.getElementById('product-modal');
-    
+
     // Update product name
     const nameElement = modal.querySelector('.product-details h2');
     if (nameElement) nameElement.textContent = productName;
-    
+
     // Update product price
     const priceElement = modal.querySelector('.product-price');
     if (priceElement) priceElement.textContent = productPrice;
-    
+
     // Update main image based on product ID
     const mainImage = modal.querySelector('.main-image');
     if (mainImage) {
         mainImage.style.background = `url('product${productId}.png') center/cover`;
     }
-    
+
     // Update thumbnails
     const thumbnails = modal.querySelectorAll('.thumbnail');
     thumbnails.forEach(thumb => {
@@ -675,7 +696,7 @@ if ('IntersectionObserver' in window) {
             }
         });
     });
-    
+
     document.querySelectorAll('img[data-src]').forEach(img => {
         imageObserver.observe(img);
     });
@@ -688,7 +709,7 @@ function trapFocus(element) {
     );
     const firstFocusable = focusableElements[0];
     const lastFocusable = focusableElements[focusableElements.length - 1];
-    
+
     element.addEventListener('keydown', (e) => {
         if (e.key === 'Tab') {
             if (e.shiftKey) {
@@ -717,20 +738,20 @@ document.querySelectorAll('.modal').forEach(modal => {
             }
         });
     });
-    
+
     observer.observe(modal, { attributes: true });
 });
 
 // Counter Animation for Stats
 function animateCounters() {
     const counters = document.querySelectorAll('.stat-number');
-    
+
     counters.forEach(counter => {
         const target = parseInt(counter.getAttribute('data-target'));
         const suffix = counter.getAttribute('data-suffix') || '';
         const increment = target / 100;
         let current = 0;
-        
+
         const timer = setInterval(() => {
             current += increment;
             if (current >= target) {
@@ -768,7 +789,7 @@ console.log('Virgin 5.0 - Luxury Skincare Application Initialized');
 // Contact Form Submission
 async function submitContactForm(event) {
     event.preventDefault();
-    
+
     const form = event.target;
     const formData = new FormData(form);
     const data = {
@@ -777,22 +798,17 @@ async function submitContactForm(event) {
         phone: formData.get('phone'),
         message: formData.get('message')
     };
-    
+
     try {
-        const response = await fetch('http://localhost:3002/api/messages', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
-        });
-        
-        const result = await response.json();
-        
-        if (result.success) {
+        const { error } = await supabase
+            .from('messages')
+            .insert([data]);
+
+        if (!error) {
             showNotification('Message sent successfully! We will get back to you soon.');
             form.reset();
         } else {
+            console.error('Error sending message:', error);
             showNotification('Failed to send message. Please try again.');
         }
     } catch (error) {
@@ -819,16 +835,16 @@ class AdCarousel {
         this.isTransitioning = false;
         this.touchStartX = 0;
         this.touchEndX = 0;
-        
+
         this.init();
     }
-    
+
     init() {
         this.createCarouselHTML();
         this.setupEventListeners();
         this.startAutoPlay();
     }
-    
+
     createCarouselHTML() {
         const carouselHTML = `
             <div class="ad-banner-carousel">
@@ -872,9 +888,9 @@ class AdCarousel {
                 </div>
             </div>
         `;
-        
+
         this.container.innerHTML = carouselHTML;
-        
+
         // Cache DOM elements
         this.track = this.container.querySelector('.carousel-track');
         this.prevBtn = this.container.querySelector('.carousel-nav.prev');
@@ -883,33 +899,33 @@ class AdCarousel {
         this.progress = this.container.querySelector('.carousel-progress');
         this.carouselContainer = this.container.querySelector('.carousel-container');
     }
-    
+
     setupEventListeners() {
         if (this.ads.length <= 1) return;
-        
+
         // Navigation buttons
         this.prevBtn?.addEventListener('click', () => this.goToPrevious());
         this.nextBtn?.addEventListener('click', () => this.goToNext());
-        
+
         // Indicators
         this.indicators.forEach((indicator, index) => {
             indicator.addEventListener('click', () => this.goToSlide(index));
         });
-        
+
         // Touch/Swipe events
         this.carouselContainer.addEventListener('touchstart', (e) => this.handleTouchStart(e), { passive: true });
         this.carouselContainer.addEventListener('touchend', (e) => this.handleTouchEnd(e), { passive: true });
-        
+
         // Mouse events for desktop dragging
         this.carouselContainer.addEventListener('mousedown', (e) => this.handleMouseDown(e));
-        
+
         // Keyboard navigation
         this.container.addEventListener('keydown', (e) => this.handleKeyDown(e));
-        
+
         // Pause auto-play on hover
         this.container.addEventListener('mouseenter', () => this.pauseAutoPlay());
         this.container.addEventListener('mouseleave', () => this.resumeAutoPlay());
-        
+
         // Pause auto-play when tab is not visible
         document.addEventListener('visibilitychange', () => {
             if (document.hidden) {
@@ -919,86 +935,86 @@ class AdCarousel {
             }
         });
     }
-    
+
     goToSlide(index, direction = 'next') {
         if (this.isTransitioning || index === this.currentIndex) return;
-        
+
         this.isTransitioning = true;
         this.currentIndex = index;
-        
+
         // Update track position
         const translateX = -index * 100;
         this.track.style.transform = `translateX(${translateX}%)`;
-        
+
         // Update indicators
         this.updateIndicators();
-        
+
         // Reset and restart auto-play progress
         this.resetAutoPlayProgress();
-        
+
         // Add click tracking
         const currentAd = this.ads[index];
         if (currentAd) {
             console.log(`Ad banner viewed: ${currentAd.id}`);
         }
-        
+
         setTimeout(() => {
             this.isTransitioning = false;
         }, 600);
     }
-    
+
     goToNext() {
         const nextIndex = (this.currentIndex + 1) % this.ads.length;
         this.goToSlide(nextIndex, 'next');
     }
-    
+
     goToPrevious() {
         const prevIndex = (this.currentIndex - 1 + this.ads.length) % this.ads.length;
         this.goToSlide(prevIndex, 'prev');
     }
-    
+
     updateIndicators() {
         this.indicators.forEach((indicator, index) => {
             indicator.classList.toggle('active', index === this.currentIndex);
         });
     }
-    
+
     handleTouchStart(e) {
         this.touchStartX = e.touches[0].clientX;
         this.pauseAutoPlay();
     }
-    
+
     handleTouchEnd(e) {
         this.touchEndX = e.changedTouches[0].clientX;
         this.handleSwipe();
         this.resumeAutoPlay();
     }
-    
+
     handleMouseDown(e) {
         this.touchStartX = e.clientX;
         this.pauseAutoPlay();
-        
+
         const handleMouseMove = (e) => {
             e.preventDefault();
         };
-        
+
         const handleMouseUp = (e) => {
             this.touchEndX = e.clientX;
             this.handleSwipe();
             this.resumeAutoPlay();
-            
+
             document.removeEventListener('mousemove', handleMouseMove);
             document.removeEventListener('mouseup', handleMouseUp);
         };
-        
+
         document.addEventListener('mousemove', handleMouseMove);
         document.addEventListener('mouseup', handleMouseUp);
     }
-    
+
     handleSwipe() {
         const swipeThreshold = 50;
         const swipeDistance = this.touchEndX - this.touchStartX;
-        
+
         if (Math.abs(swipeDistance) > swipeThreshold) {
             if (swipeDistance > 0) {
                 this.goToPrevious();
@@ -1007,7 +1023,7 @@ class AdCarousel {
             }
         }
     }
-    
+
     handleKeyDown(e) {
         switch (e.key) {
             case 'ArrowLeft':
@@ -1024,35 +1040,35 @@ class AdCarousel {
                 break;
         }
     }
-    
+
     startAutoPlay() {
         if (this.ads.length <= 1) return;
-        
+
         this.autoPlayInterval = setInterval(() => {
             this.goToNext();
         }, this.autoPlayDuration);
-        
+
         this.startAutoPlayProgress();
     }
-    
+
     pauseAutoPlay() {
         if (this.autoPlayInterval) {
             clearInterval(this.autoPlayInterval);
             this.autoPlayInterval = null;
         }
-        
+
         if (this.progressInterval) {
             clearInterval(this.progressInterval);
             this.progressInterval = null;
         }
     }
-    
+
     resumeAutoPlay() {
         if (!this.autoPlayInterval && this.ads.length > 1) {
             this.startAutoPlay();
         }
     }
-    
+
     toggleAutoPlay() {
         if (this.autoPlayInterval) {
             this.pauseAutoPlay();
@@ -1060,44 +1076,44 @@ class AdCarousel {
             this.resumeAutoPlay();
         }
     }
-    
+
     startAutoPlayProgress() {
         if (!this.progress) return;
-        
+
         let progress = 0;
         const increment = 100 / (this.autoPlayDuration / 100);
-        
+
         this.progressInterval = setInterval(() => {
             progress += increment;
             if (this.progress) {
                 this.progress.style.width = `${Math.min(progress, 100)}%`;
             }
-            
+
             if (progress >= 100) {
                 progress = 0;
             }
         }, 100);
     }
-    
+
     resetAutoPlayProgress() {
         if (this.progress) {
             this.progress.style.width = '0%';
         }
-        
+
         if (this.progressInterval) {
             clearInterval(this.progressInterval);
         }
-        
+
         this.startAutoPlayProgress();
     }
-    
+
     destroy() {
         this.pauseAutoPlay();
-        
+
         // Remove event listeners
         this.prevBtn?.removeEventListener('click', this.goToPrevious);
         this.nextBtn?.removeEventListener('click', this.goToNext);
-        
+
         // Clear container
         this.container.innerHTML = '';
     }
@@ -1110,15 +1126,15 @@ async function loadAdBanners(location) {
             console.log(`No ads found for ${location} page`);
             return;
         }
-        
+
         const ads = await response.json();
-        
+
         if (location === 'home') {
             displayHomeBanners(ads);
         } else if (location === 'products') {
             displayProductBanners(ads);
         }
-        
+
     } catch (error) {
         console.error(`Error loading ${location} ads:`, error);
     }
@@ -1128,18 +1144,18 @@ async function loadAdBanners(location) {
 function displayHomeBanners(ads) {
     const bannersContainer = document.getElementById('homeBanners');
     if (!bannersContainer) return;
-    
+
     if (ads.length === 0) {
         bannersContainer.innerHTML = '';
         return;
     }
-    
+
     // Destroy existing carousel if any
     const existingCarousel = carouselInstances.get('home');
     if (existingCarousel) {
         existingCarousel.destroy();
     }
-    
+
     // Create new carousel
     const carousel = new AdCarousel(bannersContainer, ads, 'home');
     carouselInstances.set('home', carousel);
@@ -1149,18 +1165,18 @@ function displayHomeBanners(ads) {
 function displayProductBanners(ads) {
     const bannersContainer = document.getElementById('productBanners');
     if (!bannersContainer) return;
-    
+
     if (ads.length === 0) {
         bannersContainer.innerHTML = '';
         return;
     }
-    
+
     // Destroy existing carousel if any
     const existingCarousel = carouselInstances.get('products');
     if (existingCarousel) {
         existingCarousel.destroy();
     }
-    
+
     // Create new carousel
     const carousel = new AdCarousel(bannersContainer, ads, 'products');
     carouselInstances.set('products', carousel);
@@ -1177,8 +1193,8 @@ function preloadBannerImages() {
                 img.src = `http://localhost:3001${ad.image_path}`;
             });
         })
-        .catch(() => {}); // Silently fail
-    
+        .catch(() => { }); // Silently fail
+
     // Preload product banners
     fetch('http://localhost:3002/api/ads/active/products')
         .then(response => response.json())
@@ -1188,21 +1204,21 @@ function preloadBannerImages() {
                 img.src = `http://localhost:3001${ad.image_path}`;
             });
         })
-        .catch(() => {}); // Silently fail
+        .catch(() => { }); // Silently fail
 }
 
 // Enhanced page navigation with carousel management
 const originalNavigateToPage = window.navigateToPage || navigateToPage;
-window.navigateToPage = function(pageId) {
+window.navigateToPage = function (pageId) {
     originalNavigateToPage(pageId);
-    
+
     // Add page transition effect
     document.body.style.transition = 'opacity 0.3s ease';
     document.body.style.opacity = '0.95';
     setTimeout(() => {
         document.body.style.opacity = '1';
     }, 150);
-    
+
     // Load appropriate ads based on page with delay for smooth transition
     setTimeout(() => {
         if (pageId === 'hero-page') {
@@ -1214,10 +1230,10 @@ window.navigateToPage = function(pageId) {
 };
 
 // Load ads when page loads
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     // Preload banner images for better performance
     preloadBannerImages();
-    
+
     // Load home page ads with a slight delay for better UX
     setTimeout(() => {
         loadAdBanners('home');
@@ -1225,7 +1241,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // Cleanup carousels when page unloads
-window.addEventListener('beforeunload', function() {
+window.addEventListener('beforeunload', function () {
     carouselInstances.forEach(carousel => {
         carousel.destroy();
     });

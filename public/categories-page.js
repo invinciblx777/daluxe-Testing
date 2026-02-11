@@ -2,11 +2,18 @@
 
 let categories = [];
 
-// Load categories from API
+// Load categories from Supabase
 async function loadCategories() {
     try {
-        const response = await fetch('http://localhost:3002/api/categories');
-        categories = await response.json();
+        console.log('📂 Loading categories from Supabase...');
+        const { data, error } = await supabase
+            .from('categories')
+            .select('*')
+            .order('display_order', { ascending: true });
+
+        if (error) throw error;
+
+        categories = data;
         renderCategories();
     } catch (error) {
         console.error('Error loading categories:', error);
@@ -18,7 +25,7 @@ async function loadCategories() {
 function renderCategories() {
     const container = document.getElementById('categoriesTableBody');
     if (!container) return;
-    
+
     if (categories.length === 0) {
         container.innerHTML = `
             <tr>
@@ -29,7 +36,7 @@ function renderCategories() {
         `;
         return;
     }
-    
+
     container.innerHTML = categories.map(category => `
         <tr>
             <td>${category.id}</td>
@@ -65,19 +72,19 @@ function renderCategories() {
 function showAddCategoryModal() {
     const modal = document.getElementById('categoryModal');
     if (!modal) return;
-    
+
     document.getElementById('modalTitle').textContent = 'Add New Category';
     document.getElementById('categoryId').value = '';
     document.getElementById('categoryName').value = '';
     document.getElementById('categoryDescription').value = '';
     document.getElementById('categoryActive').checked = true;
-    
+
     // Hide display order field for new categories (auto-assigned)
     const displayOrderGroup = document.getElementById('displayOrderGroup');
     if (displayOrderGroup) {
         displayOrderGroup.style.display = 'none';
     }
-    
+
     modal.classList.add('active');
     modal.style.display = 'flex';
 }
@@ -94,44 +101,50 @@ function closeCategoryModal() {
 // Save category (add or update)
 async function saveCategory(event) {
     event.preventDefault();
-    
+
     const categoryId = document.getElementById('categoryId').value;
     const name = document.getElementById('categoryName').value.trim();
     const description = document.getElementById('categoryDescription').value.trim();
     const is_active = document.getElementById('categoryActive').checked;
-    
+
     if (!name) {
         showNotification('Category name is required', 'error');
         return;
     }
-    
-    // Only include display_order when editing
-    const data = { name, description, is_active };
-    if (categoryId) {
-        data.display_order = parseInt(document.getElementById('categoryOrder').value) || 0;
-    }
-    
+
     try {
-        const url = categoryId ? 
-            `http://localhost:3002/api/categories/${categoryId}` : 
-            'http://localhost:3002/api/categories';
-        const method = categoryId ? 'PUT' : 'POST';
-        
-        const response = await fetch(url, {
-            method: method,
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
-        });
-        
-        const result = await response.json();
-        
-        if (result.success) {
-            showNotification(result.message, 'success');
-            closeCategoryModal();
-            loadCategories();
+        if (categoryId) {
+            // Update
+            const display_order = parseInt(document.getElementById('categoryOrder').value) || 0;
+            const { error } = await supabase
+                .from('categories')
+                .update({ name, description, is_active, display_order })
+                .eq('id', categoryId);
+
+            if (error) throw error;
+            showNotification('Category updated successfully', 'success');
         } else {
-            showNotification(result.error || 'Failed to save category', 'error');
+            // Insert
+            // Get max display order
+            const { data: maxOrderData } = await supabase
+                .from('categories')
+                .select('display_order')
+                .order('display_order', { ascending: false })
+                .limit(1);
+
+            const nextOrder = (maxOrderData && maxOrderData.length > 0) ? maxOrderData[0].display_order + 1 : 1;
+
+            const { error } = await supabase
+                .from('categories')
+                .insert([{ name, description, is_active, display_order: nextOrder }]);
+
+            if (error) throw error;
+            showNotification('Category added successfully', 'success');
         }
+
+        closeCategoryModal();
+        loadCategories();
+
     } catch (error) {
         console.error('Error saving category:', error);
         showNotification('Failed to save category', 'error');
@@ -141,20 +154,25 @@ async function saveCategory(event) {
 // Edit category
 async function editCategory(id) {
     try {
-        const response = await fetch(`http://localhost:3002/api/categories/${id}`);
-        const category = await response.json();
-        
+        const { data: category, error } = await supabase
+            .from('categories')
+            .select('*')
+            .eq('id', id)
+            .single();
+
+        if (error) throw error;
+
         const modal = document.getElementById('categoryModal');
         modal.classList.add('active');
         modal.style.display = 'flex';
-        
+
         document.getElementById('modalTitle').textContent = 'Edit Category';
         document.getElementById('categoryId').value = category.id;
         document.getElementById('categoryName').value = category.name;
         document.getElementById('categoryDescription').value = category.description || '';
         document.getElementById('categoryOrder').value = category.display_order;
         document.getElementById('categoryActive').checked = category.is_active;
-        
+
         // Show display order field for editing
         const displayOrderGroup = document.getElementById('displayOrderGroup');
         if (displayOrderGroup) {
@@ -170,18 +188,16 @@ async function editCategory(id) {
 async function deleteCategory(id, name) {
     if (confirm(`Are you sure you want to delete "${name}"?\n\nThis action cannot be undone. Products using this category will need to be reassigned.`)) {
         try {
-            const response = await fetch(`http://localhost:3002/api/categories/${id}`, {
-                method: 'DELETE'
-            });
-            
-            const result = await response.json();
-            
-            if (result.success) {
-                showCategoryNotification('Category deleted successfully', 'success');
-                loadCategories();
-            } else {
-                showCategoryNotification(result.error || 'Failed to delete category', 'error');
-            }
+            const { error } = await supabase
+                .from('categories')
+                .delete()
+                .eq('id', id);
+
+            if (error) throw error;
+
+            showCategoryNotification('Category deleted successfully', 'success');
+            loadCategories();
+
         } catch (error) {
             console.error('Error deleting category:', error);
             showCategoryNotification('Failed to delete category', 'error');
@@ -207,7 +223,7 @@ function showCategoryNotification(message, type = 'info') {
         max-width: 400px;
         box-shadow: 0 4px 12px rgba(0,0,0,0.15);
     `;
-    
+
     // Set background color based on type
     const colors = {
         success: '#22c55e',
@@ -216,12 +232,12 @@ function showCategoryNotification(message, type = 'info') {
         info: '#3b82f6'
     };
     notification.style.background = colors[type] || colors.info;
-    
+
     notification.textContent = message;
-    
+
     // Add to page
     document.body.appendChild(notification);
-    
+
     // Remove after 3 seconds
     setTimeout(() => {
         notification.style.animation = 'slideOut 0.3s ease';

@@ -1,9 +1,22 @@
 // Admin Panel JavaScript
 
 // Check authentication
-if (sessionStorage.getItem('adminLoggedIn') !== 'true') {
-    window.location.href = '/admin';
-}
+(async function checkAuth() {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+        // Fallback or legacy check
+        if (sessionStorage.getItem('adminLoggedIn') !== 'true') {
+            // If no supabase session and no legacy flag, redirect
+            // Using admin-login.html as that is the file name
+            window.location.href = 'admin-login.html';
+        } else {
+            // If legacy flag exists but no Supabase session (edge case), 
+            // maybe we should clear it or trust it? 
+            // For now, let's respect the legacy flag to avoid loop if Supabase fails
+            console.warn("Legacy auth flag found but no Supabase session.");
+        }
+    }
+})();
 
 // Page Navigation
 function navigateToPage(pageName) {
@@ -11,12 +24,12 @@ function navigateToPage(pageName) {
     if (window.location.hash.slice(1) !== pageName) {
         window.location.hash = pageName;
     }
-    
+
     // Load page content from admin-pages.js
     const content = window.adminPages && window.adminPages[pageName];
     if (content) {
         document.querySelector('.dashboard-content').innerHTML = content;
-        
+
         // Update active nav link
         document.querySelectorAll('.nav-link').forEach(link => {
             link.classList.remove('active');
@@ -24,13 +37,13 @@ function navigateToPage(pageName) {
                 link.classList.add('active');
             }
         });
-        
+
         // Update page title
         document.title = `${pageName.charAt(0).toUpperCase() + pageName.slice(1)} - Luxe Beauty Admin`;
-        
+
         // Scroll to top
         window.scrollTo(0, 0);
-        
+
         // Re-initialize time if dashboard
         if (pageName === 'dashboard') {
             updateLastUpdatedTime();
@@ -43,43 +56,43 @@ function navigateToPage(pageName) {
                 }, 100);
             }
         }
-        
+
         // Load products if products page
         if (pageName === 'products' && typeof loadProducts === 'function') {
             setTimeout(() => loadProducts(), 100);
         }
-        
+
         // Load categories if categories page
         if (pageName === 'categories' && typeof loadCategories === 'function') {
             setTimeout(() => loadCategories(), 100);
         }
-        
+
         // Load orders if orders page
         if (pageName === 'orders' && typeof loadOrders === 'function') {
             console.log('🔄 Navigating to orders page, loading orders...');
             setTimeout(() => loadOrders(), 100);
         }
-        
+
         // Load customers if customers page
         if (pageName === 'customers' && typeof loadCustomers === 'function') {
             setTimeout(() => loadCustomers(), 100);
         }
-        
+
         // Load messages if messages page
         if (pageName === 'messages' && typeof loadMessages === 'function') {
             setTimeout(() => loadMessages(), 100);
         }
-        
+
         // Load payments if payments page
         if (pageName === 'payments' && typeof loadPayments === 'function') {
             setTimeout(() => loadPayments(), 100);
         }
-        
+
         // Load offers if offers page
         if (pageName === 'offers' && typeof loadOffers === 'function') {
             setTimeout(() => loadOffers(), 100);
         }
-        
+
         // Load ads if ads page
         if (pageName === 'ads' && typeof initAdsPage === 'function') {
             setTimeout(() => initAdsPage(), 100);
@@ -95,9 +108,9 @@ function updateLastUpdatedTime() {
     const lastUpdatedElement = document.getElementById('lastUpdated');
     if (lastUpdatedElement) {
         const now = new Date();
-        const options = { 
-            year: 'numeric', 
-            month: 'short', 
+        const options = {
+            year: 'numeric',
+            month: 'short',
             day: 'numeric',
             hour: '2-digit',
             minute: '2-digit'
@@ -112,21 +125,21 @@ function initThemeToggle() {
     const html = document.documentElement;
     const darkIcon = themeToggle.querySelector('.theme-icon-dark');
     const lightIcon = themeToggle.querySelector('.theme-icon-light');
-    
+
     // Load saved theme
     const savedTheme = localStorage.getItem('adminTheme') || 'dark';
     html.setAttribute('data-theme', savedTheme);
     updateThemeIcons(savedTheme);
-    
+
     themeToggle.addEventListener('click', () => {
         const currentTheme = html.getAttribute('data-theme');
         const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-        
+
         html.setAttribute('data-theme', newTheme);
         localStorage.setItem('adminTheme', newTheme);
         updateThemeIcons(newTheme);
     });
-    
+
     function updateThemeIcons(theme) {
         if (theme === 'dark') {
             darkIcon.style.display = 'block';
@@ -142,29 +155,30 @@ function initThemeToggle() {
 function initLogout() {
     const logoutBtn = document.getElementById('logoutBtn');
     if (logoutBtn) {
-        logoutBtn.addEventListener('click', () => {
+        logoutBtn.addEventListener('click', async () => {
             if (confirm('Are you sure you want to logout?')) {
+                await supabase.auth.signOut();
                 sessionStorage.removeItem('adminLoggedIn');
                 sessionStorage.removeItem('adminEmail');
-                window.location.href = '/admin';
+                window.location.href = 'admin-login.html';
             }
         });
     }
 }
 
 // Initialize on page load
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     updateLastUpdatedTime();
     initThemeToggle();
     initLogout();
-    
+
     // Update time every minute
     setInterval(updateLastUpdatedTime, 60000);
-    
+
     // Handle nav link clicks
     const navLinks = document.querySelectorAll('.nav-link');
     navLinks.forEach(link => {
-        link.addEventListener('click', function(e) {
+        link.addEventListener('click', function (e) {
             e.preventDefault();
             const pageName = this.getAttribute('data-page');
             if (pageName) {
@@ -172,20 +186,20 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
-    
+
     // Load dashboard by default or from hash
     const hash = window.location.hash.slice(1) || 'dashboard';
     navigateToPage(hash);
-    
+
     // Handle browser back/forward
     window.addEventListener('hashchange', () => {
         const page = window.location.hash.slice(1) || 'dashboard';
         navigateToPage(page);
     });
-    
+
     // Initialize Quick Actions buttons
     initQuickActions();
-    
+
     console.log('Luxe Beauty Admin Panel Initialized');
 });
 
@@ -230,9 +244,9 @@ function showNotification(message, type = 'info') {
         max-width: 300px;
     `;
     notification.textContent = message;
-    
+
     document.body.appendChild(notification);
-    
+
     setTimeout(() => {
         notification.style.animation = 'slideOut 0.3s ease';
         setTimeout(() => {
@@ -272,7 +286,7 @@ function showNotification(message, type = 'info') {
     // Remove existing notifications
     const existingNotifications = document.querySelectorAll('.notification');
     existingNotifications.forEach(notification => notification.remove());
-    
+
     // Create notification element
     const notification = document.createElement('div');
     notification.className = `notification notification-${type}`;
@@ -282,10 +296,10 @@ function showNotification(message, type = 'info') {
             <button class="notification-close" onclick="this.parentElement.parentElement.remove()">×</button>
         </div>
     `;
-    
+
     // Add to page
     document.body.appendChild(notification);
-    
+
     // Auto remove after 5 seconds
     setTimeout(() => {
         if (notification.parentElement) {

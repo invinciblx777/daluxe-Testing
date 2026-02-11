@@ -1,0 +1,23 @@
+nohup: ignoring input
+═══════════════════════════════════════════════════════
+  Luxe Beauty API Server
+═══════════════════════════════════════════════════════
+  🚀 API running at: http://localhost:3002
+  📦 Database: luxe_beauty
+═══════════════════════════════════════════════════════
+
+❌ Database connection failed: 
+Please make sure MySQL is running and credentials are correct
+Error creating coupon: Error: Can't add new command when connection is in closed state
+    at Connection._addCommandClosedState (/home/invinciblx777/Downloads/Test/DALUXE-Website/node_modules/mysql2/lib/base/connection.js:159:17)
+    at Connection.query (/home/invinciblx777/Downloads/Test/DALUXE-Website/node_modules/mysql2/lib/base/connection.js:604:17)
+    at /home/invinciblx777/Downloads/Test/DALUXE-Website/api-server.js:663:8
+    at Layer.handleRequest (/home/invinciblx777/Downloads/Test/DALUXE-Website/node_modules/router/lib/layer.js:152:17)
+    at next (/home/invinciblx777/Downloads/Test/DALUXE-Website/node_modules/router/lib/route.js:157:13)
+    at Route.dispatch (/home/invinciblx777/Downloads/Test/DALUXE-Website/node_modules/router/lib/route.js:117:3)
+    at handle (/home/invinciblx777/Downloads/Test/DALUXE-Website/node_modules/router/index.js:435:11)
+    at Layer.handleRequest (/home/invinciblx777/Downloads/Test/DALUXE-Website/node_modules/router/lib/layer.js:152:17)
+    at /home/invinciblx777/Downloads/Test/DALUXE-Website/node_modules/router/index.js:295:15
+    at processParams (/home/invinciblx777/Downloads/Test/DALUXE-Website/node_modules/router/index.js:582:12) {
+  fatal: true
+}

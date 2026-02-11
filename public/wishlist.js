@@ -75,9 +75,9 @@ function updateWishlistButton(productId) {
 function renderWishlist() {
     const wishlistContainer = document.getElementById('wishlistItems');
     const emptyWishlist = document.getElementById('emptyWishlist');
-    
+
     if (!wishlistContainer) return;
-    
+
     if (wishlistItems.length === 0) {
         wishlistContainer.innerHTML = '';
         if (emptyWishlist) {
@@ -85,19 +85,19 @@ function renderWishlist() {
         }
         return;
     }
-    
+
     if (emptyWishlist) {
         emptyWishlist.style.display = 'none';
     }
-    
+
     wishlistContainer.innerHTML = wishlistItems.map(product => {
         const hasOffer = product.offer_percentage && product.offer_percentage > 0;
         const originalPrice = parseFloat(product.price);
         const discountedPrice = hasOffer ? originalPrice * (1 - product.offer_percentage / 100) : originalPrice;
-        
+
         return `
             <div class="wishlist-item" data-product-id="${product.id}">
-                <div class="wishlist-item-image" style="background-image: url('http://localhost:3002${product.image}')"></div>
+                <div class="wishlist-item-image" style="background-image: url('${product.image || '/placeholder-product.png'}')"></div>
                 <div class="wishlist-item-details">
                     <div>
                         <div class="wishlist-item-name">${product.name}</div>
@@ -161,9 +161,9 @@ function handleWishlistButtonClick(product) {
 }
 
 // Initialize wishlist
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     loadWishlist();
-    
+
     // Open wishlist modal buttons (all pages)
     const wishlistButtons = ['openWishlist', 'openWishlist2', 'openWishlist3', 'openWishlist4'];
     wishlistButtons.forEach(btnId => {
@@ -172,17 +172,17 @@ document.addEventListener('DOMContentLoaded', function() {
             btn.addEventListener('click', openWishlistModal);
         }
     });
-    
+
     // Close wishlist modal
     const wishlistModal = document.getElementById('wishlist-modal');
     if (wishlistModal) {
         const closeBtn = wishlistModal.querySelector('.modal-close');
         const backdrop = wishlistModal.querySelector('.modal-backdrop');
-        
+
         if (closeBtn) {
             closeBtn.addEventListener('click', closeWishlistModal);
         }
-        
+
         if (backdrop) {
             backdrop.addEventListener('click', closeWishlistModal);
         }

@@ -11,20 +11,20 @@ function initAdsPage() {
 // Load all ads
 async function loadAds() {
     try {
-        console.log('📥 Loading ads...');
-        const response = await fetch('http://localhost:3002/api/ads');
-        
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        
-        const ads = await response.json();
-        console.log('✅ Ads loaded:', ads);
-        
-        currentAds = ads;
+        console.log('📥 Loading ads from Supabase...');
+        const { data, error } = await supabase
+            .from('ads')
+            .select('*')
+            .order('display_order', { ascending: true });
+
+        if (error) throw error;
+
+        console.log('✅ Ads loaded:', data.length);
+
+        currentAds = data;
         renderAdsTable();
         updateAdsStats();
-        
+
     } catch (error) {
         console.error('❌ Error loading ads:', error);
         showNotification('Failed to load ads', 'error');
@@ -35,7 +35,7 @@ async function loadAds() {
 function renderAdsTable() {
     const tableBody = document.querySelector('#adsTableBody');
     if (!tableBody) return;
-    
+
     if (currentAds.length === 0) {
         tableBody.innerHTML = `
             <tr>
@@ -61,12 +61,12 @@ function renderAdsTable() {
         `;
         return;
     }
-    
+
     tableBody.innerHTML = currentAds.map(ad => `
         <tr>
             <td>
                 <div class="ad-preview">
-                    <img src="http://localhost:3001${ad.image_path}" alt="${ad.title}" class="ad-thumbnail">
+                    <img src="${ad.image_path}" alt="${ad.title}" class="ad-thumbnail" onerror="this.src='placeholder.png'">
                     <div class="ad-info">
                         <div class="ad-title">${ad.title}</div>
                         <div class="ad-id">#${ad.id}</div>
@@ -95,10 +95,10 @@ function renderAdsTable() {
                     </button>
                     <button class="btn-icon btn-toggle" onclick="toggleAdStatus(${ad.id})" title="${ad.is_active ? 'Deactivate' : 'Activate'} Ad">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            ${ad.is_active ? 
-                                '<path d="M10 9V6a4 4 0 1 1 8 0v3"/><rect x="8" y="9" width="8" height="5" rx="1" ry="1"/>' :
-                                '<rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><circle cx="12" cy="16" r="1"/>'
-                            }
+                            ${ad.is_active ?
+            '<path d="M10 9V6a4 4 0 1 1 8 0v3"/><rect x="8" y="9" width="8" height="5" rx="1" ry="1"/>' :
+            '<rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><circle cx="12" cy="16" r="1"/>'
+        }
                         </svg>
                     </button>
                     <button class="btn-icon btn-delete" onclick="deleteAd(${ad.id})" title="Delete Ad">
@@ -121,15 +121,14 @@ function updateAdsStats() {
     const activeAds = currentAds.filter(ad => ad.is_active).length;
     const homeAds = currentAds.filter(ad => ad.location === 'home').length;
     const productAds = currentAds.filter(ad => ad.location === 'products').length;
-    
-    // Update stats cards if they exist
+
     const statsElements = {
         totalAds: document.querySelector('#totalAdsCount'),
         activeAds: document.querySelector('#activeAdsCount'),
         homeAds: document.querySelector('#homeAdsCount'),
         productAds: document.querySelector('#productAdsCount')
     };
-    
+
     if (statsElements.totalAds) statsElements.totalAds.textContent = totalAds;
     if (statsElements.activeAds) statsElements.activeAds.textContent = activeAds;
     if (statsElements.homeAds) statsElements.homeAds.textContent = homeAds;
@@ -142,18 +141,18 @@ function showAddAdModal() {
     const modal = document.getElementById('adModal');
     const form = document.getElementById('adForm');
     const modalTitle = document.querySelector('#adModal .modal-title');
-    
+
     modalTitle.textContent = 'Add New Ad Banner';
     form.reset();
-    
+
     // Reset image preview
     const imagePreview = document.getElementById('imagePreview');
     const imageUpload = document.getElementById('imageUpload');
     imagePreview.style.display = 'none';
     imageUpload.style.display = 'block';
-    
+
     modal.style.display = 'flex';
-    
+
     // Setup enhanced features after modal is shown
     setTimeout(() => {
         setupDragAndDrop();
@@ -166,42 +165,40 @@ function showAddAdModal() {
 // Edit ad
 async function editAd(adId) {
     try {
-        const response = await fetch(`http://localhost:3002/api/ads/${adId}`);
-        if (!response.ok) throw new Error('Failed to fetch ad');
-        
-        const ad = await response.json();
-        
+        const ad = currentAds.find(a => a.id === adId);
+        if (!ad) throw new Error('Ad not found');
+
         editingAdId = adId;
         const modal = document.getElementById('adModal');
         const form = document.getElementById('adForm');
         const modalTitle = document.querySelector('#adModal .modal-title');
-        
+
         modalTitle.textContent = 'Edit Ad Banner';
-        
+
         // Fill form with ad data
         document.getElementById('adTitle').value = ad.title;
         document.getElementById('adLocation').value = ad.location;
         document.getElementById('adDisplayOrder').value = ad.display_order;
         document.getElementById('adIsActive').checked = ad.is_active;
-        
+
         // Show current image
         const imagePreview = document.getElementById('imagePreview');
         const imageUpload = document.getElementById('imageUpload');
         const currentImage = document.getElementById('currentImage');
-        
-        currentImage.src = `http://localhost:3001${ad.image_path}`;
+
+        currentImage.src = ad.image_path;
         imagePreview.style.display = 'block';
         imageUpload.style.display = 'none';
-        
+
         modal.style.display = 'flex';
-        
+
         // Setup enhanced features after modal is shown
         setTimeout(() => {
             setupDragAndDrop();
             updateImageUploadHandler();
             setupAutoSave();
         }, 100);
-        
+
     } catch (error) {
         console.error('Error loading ad:', error);
         showNotification('Failed to load ad details', 'error');
@@ -211,18 +208,19 @@ async function editAd(adId) {
 // Handle ad form submission
 async function handleAdSubmit(event) {
     event.preventDefault();
-    
+
     const form = event.target;
-    const formData = new FormData(form);
+    // Create form data 
+    // We will extract data manually to handle Supabase logic
+
+    const title = document.getElementById('adTitle').value;
+    const location = document.getElementById('adLocation').value;
+    const displayOrder = parseInt(document.getElementById('adDisplayOrder').value) || 0;
+    const isActive = document.getElementById('adIsActive').checked;
+
     const submitBtn = form.querySelector('button[type="submit"]');
     const originalText = submitBtn.textContent;
-    
-    // Convert checkbox value properly
-    const isActiveCheckbox = document.getElementById('adIsActive');
-    if (isActiveCheckbox) {
-        formData.set('is_active', isActiveCheckbox.checked ? 'true' : 'false');
-    }
-    
+
     // Show loading state
     submitBtn.disabled = true;
     submitBtn.innerHTML = `
@@ -231,38 +229,80 @@ async function handleAdSubmit(event) {
             ${editingAdId ? 'Updating...' : 'Creating...'}
         </div>
     `;
-    
+
     try {
-        const url = editingAdId ? `http://localhost:3002/api/ads/${editingAdId}` : 'http://localhost:3002/api/ads';
-        const method = editingAdId ? 'PUT' : 'POST';
-        
         console.log(`${editingAdId ? 'Updating' : 'Creating'} ad...`);
-        
-        const response = await fetch(url, {
-            method: method,
-            body: formData
-        });
-        
-        const result = await response.json();
-        
-        if (!response.ok) {
-            throw new Error(result.error || 'Failed to save ad');
+
+        // Handle Image Upload if selected
+        const fileInput = document.getElementById('adImage');
+        let imagePath = null;
+
+        if (fileInput.files.length > 0) {
+            const file = fileInput.files[0];
+            const fileExt = file.name.split('.').pop();
+            const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
+            const filePath = `ads/${fileName}`;
+
+            console.log('Uploading image to Supabase Storage...');
+            const { error: uploadError } = await supabase.storage
+                .from('ads')
+                .upload(fileName, file);
+
+            if (uploadError) throw uploadError;
+
+            // Get public URL
+            const { data: { publicUrl } } = supabase.storage
+                .from('ads')
+                .getPublicUrl(fileName);
+
+            imagePath = publicUrl;
+        } else if (editingAdId) {
+            // Keep existing image if editing and no new file
+            const currentAd = currentAds.find(a => a.id === editingAdId);
+            imagePath = currentAd ? currentAd.image_path : null;
         }
-        
+
+        if (!imagePath) throw new Error('Image is required');
+
+        // Database operation
+        const adData = {
+            title,
+            location,
+            display_order: displayOrder,
+            is_active: isActive,
+            image_path: imagePath
+        };
+
+        let error;
+        if (editingAdId) {
+            const { error: updateError } = await supabase
+                .from('ads')
+                .update(adData)
+                .eq('id', editingAdId);
+            error = updateError;
+        } else {
+            const { error: insertError } = await supabase
+                .from('ads')
+                .insert([adData]);
+            error = insertError;
+        }
+
+        if (error) throw error;
+
         console.log('✅ Ad saved successfully');
-        showNotification(result.message, 'success');
-        
+        showNotification(editingAdId ? 'Ad updated successfully' : 'Ad created successfully', 'success');
+
         // Clear draft on successful save
         clearDraft();
-        
+
         // Close modal and reload ads
         closeAdModal();
         loadAds();
-        
+
         // Show success animation on the add button
         const addBtn = document.querySelector('.primary-btn');
         showSuccessAnimation(addBtn);
-        
+
     } catch (error) {
         console.error('❌ Error saving ad:', error);
         showNotification(error.message, 'error');
@@ -276,22 +316,24 @@ async function handleAdSubmit(event) {
 // Toggle ad status
 async function toggleAdStatus(adId) {
     try {
-        const response = await fetch(`http://localhost:3002/api/ads/${adId}/toggle`, {
-            method: 'PUT'
-        });
-        
-        const result = await response.json();
-        
-        if (!response.ok) {
-            throw new Error(result.error || 'Failed to toggle ad status');
-        }
-        
-        showNotification(result.message, 'success');
+        const ad = currentAds.find(a => a.id === adId);
+        if (!ad) return;
+
+        const newStatus = !ad.is_active;
+
+        const { error } = await supabase
+            .from('ads')
+            .update({ is_active: newStatus })
+            .eq('id', adId);
+
+        if (error) throw error;
+
+        showNotification('Ad status updated', 'success');
         loadAds();
-        
+
     } catch (error) {
         console.error('Error toggling ad status:', error);
-        showNotification(error.message, 'error');
+        showNotification('Failed to update status', 'error');
     }
 }
 
@@ -299,25 +341,28 @@ async function toggleAdStatus(adId) {
 async function deleteAd(adId) {
     const ad = currentAds.find(a => a.id === adId);
     if (!ad) return;
-    
-    if (!confirm(`Are you sure you want to delete "${ad.title}"? This action cannot be undone.`)) {
-        return;
+
+    // Check if confirmDelete global exists (from enhanced code), else use confirm
+    let confirmed = false;
+    if (window.confirmDelete) {
+        confirmed = await window.confirmDelete(ad.title);
+    } else {
+        confirmed = confirm(`Are you sure you want to delete "${ad.title}"?`);
     }
-    
+
+    if (!confirmed) return;
+
     try {
-        const response = await fetch(`http://localhost:3002/api/ads/${adId}`, {
-            method: 'DELETE'
-        });
-        
-        const result = await response.json();
-        
-        if (!response.ok) {
-            throw new Error(result.error || 'Failed to delete ad');
-        }
-        
-        showNotification(result.message, 'success');
+        const { error } = await supabase
+            .from('ads')
+            .delete()
+            .eq('id', adId);
+
+        if (error) throw error;
+
+        showNotification('Ad deleted successfully', 'success');
         loadAds();
-        
+
     } catch (error) {
         console.error('Error deleting ad:', error);
         showNotification(error.message, 'error');
@@ -335,28 +380,28 @@ function closeAdModal() {
 function handleImageUpload(event) {
     const file = event.target.files[0];
     if (!file) return;
-    
+
     // Validate file type
     if (!file.type.startsWith('image/')) {
         showNotification('Please select a valid image file', 'error');
         event.target.value = '';
         return;
     }
-    
+
     // Validate file size (5MB limit)
     if (file.size > 5 * 1024 * 1024) {
         showNotification('Image size must be less than 5MB', 'error');
         event.target.value = '';
         return;
     }
-    
+
     // Show preview
     const reader = new FileReader();
-    reader.onload = function(e) {
+    reader.onload = function (e) {
         const imagePreview = document.getElementById('imagePreview');
         const imageUpload = document.getElementById('imageUpload');
         const currentImage = document.getElementById('currentImage');
-        
+
         currentImage.src = e.target.result;
         imagePreview.style.display = 'block';
         imageUpload.style.display = 'none';
@@ -368,42 +413,42 @@ function handleImageUpload(event) {
 function setupDragAndDrop() {
     const uploadArea = document.getElementById('imageUpload');
     if (!uploadArea) return;
-    
+
     ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
         uploadArea.addEventListener(eventName, preventDefaults, false);
     });
-    
+
     function preventDefaults(e) {
         e.preventDefault();
         e.stopPropagation();
     }
-    
+
     ['dragenter', 'dragover'].forEach(eventName => {
         uploadArea.addEventListener(eventName, highlight, false);
     });
-    
+
     ['dragleave', 'drop'].forEach(eventName => {
         uploadArea.addEventListener(eventName, unhighlight, false);
     });
-    
+
     function highlight(e) {
         uploadArea.classList.add('dragover');
     }
-    
+
     function unhighlight(e) {
         uploadArea.classList.remove('dragover');
     }
-    
+
     uploadArea.addEventListener('drop', handleDrop, false);
-    
+
     function handleDrop(e) {
         const dt = e.dataTransfer;
         const files = dt.files;
-        
+
         if (files.length > 0) {
             const fileInput = document.getElementById('adImage');
             fileInput.files = files;
-            
+
             // Trigger the change event
             const event = new Event('change', { bubbles: true });
             fileInput.dispatchEvent(event);
@@ -416,7 +461,7 @@ function removeImagePreview() {
     const imagePreview = document.getElementById('imagePreview');
     const imageUpload = document.getElementById('imageUpload');
     const imageInput = document.getElementById('adImage');
-    
+
     imagePreview.style.display = 'none';
     imageUpload.style.display = 'block';
     imageInput.value = '';
@@ -427,27 +472,27 @@ function filterAds() {
     const searchTerm = document.getElementById('adSearch').value.toLowerCase();
     const locationFilter = document.getElementById('locationFilter').value;
     const statusFilter = document.getElementById('statusFilter').value;
-    
+
     let filteredAds = currentAds;
-    
+
     // Apply search filter
     if (searchTerm) {
-        filteredAds = filteredAds.filter(ad => 
+        filteredAds = filteredAds.filter(ad =>
             ad.title.toLowerCase().includes(searchTerm)
         );
     }
-    
+
     // Apply location filter
     if (locationFilter) {
         filteredAds = filteredAds.filter(ad => ad.location === locationFilter);
     }
-    
+
     // Apply status filter
     if (statusFilter) {
         const isActive = statusFilter === 'active';
         filteredAds = filteredAds.filter(ad => ad.is_active === isActive);
     }
-    
+
     // Update table with filtered results
     const originalAds = currentAds;
     currentAds = filteredAds;
@@ -476,6 +521,7 @@ window.closeAdModal = closeAdModal;
 window.handleImageUpload = handleImageUpload;
 window.removeImagePreview = removeImagePreview;
 window.filterAds = filterAds;
+
 // Add loading states and better feedback
 function showLoading(element, text = 'Loading...') {
     if (element) {
@@ -528,117 +574,73 @@ function confirmDelete(adTitle) {
                 </div>
             </div>
         `;
-        
+
         document.body.appendChild(modal);
-        
+
         const cancelBtn = modal.querySelector('.cancel-btn');
         const confirmBtn = modal.querySelector('.confirm-btn');
         const backdrop = modal.querySelector('.modal-backdrop');
-        
+
         function cleanup() {
             document.body.removeChild(modal);
         }
-        
+
         cancelBtn.onclick = () => {
             cleanup();
             resolve(false);
         };
-        
+
         backdrop.onclick = () => {
             cleanup();
             resolve(false);
         };
-        
+
         confirmBtn.onclick = () => {
             cleanup();
             resolve(true);
         };
     });
 }
-
-// Update delete function to use enhanced confirmation
-async function deleteAd(adId) {
-    const ad = currentAds.find(a => a.id === adId);
-    if (!ad) return;
-    
-    const confirmed = await confirmDelete(ad.title);
-    if (!confirmed) return;
-    
-    try {
-        const response = await fetch(`http://localhost:3002/api/ads/${adId}`, {
-            method: 'DELETE'
-        });
-        
-        const result = await response.json();
-        
-        if (!response.ok) {
-            throw new Error(result.error || 'Failed to delete ad');
-        }
-        
-        showNotification(result.message, 'success');
-        loadAds();
-        
-    } catch (error) {
-        console.error('Error deleting ad:', error);
-        showNotification(error.message, 'error');
-    }
-}
-
-// Add keyboard shortcuts
-document.addEventListener('keydown', function(e) {
-    // Escape key to close modals
-    if (e.key === 'Escape') {
-        const modal = document.getElementById('adModal');
-        if (modal && modal.style.display === 'flex') {
-            closeAdModal();
-        }
-    }
-    
-    // Ctrl/Cmd + N to add new ad
-    if ((e.ctrlKey || e.metaKey) && e.key === 'n') {
-        e.preventDefault();
-        showAddAdModal();
-    }
-});
+window.confirmDelete = confirmDelete;
 
 // Auto-save draft functionality
 let draftTimer;
 function saveDraft() {
     const form = document.getElementById('adForm');
     if (!form) return;
-    
-    const formData = new FormData(form);
+
+    // Basic draft saving with limited fields since file inputs can't be saved
     const draft = {
-        title: formData.get('title'),
-        location: formData.get('location'),
-        display_order: formData.get('display_order'),
-        is_active: formData.get('is_active'),
+        title: document.getElementById('adTitle').value,
+        location: document.getElementById('adLocation').value,
+        display_order: document.getElementById('adDisplayOrder').value,
+        is_active: document.getElementById('adIsActive').checked,
         timestamp: Date.now()
     };
-    
+
     localStorage.setItem('adDraft', JSON.stringify(draft));
 }
 
 function loadDraft() {
     const draftStr = localStorage.getItem('adDraft');
     if (!draftStr) return;
-    
+
     try {
         const draft = JSON.parse(draftStr);
-        
+
         // Only load if draft is less than 1 hour old
         if (Date.now() - draft.timestamp > 3600000) {
             localStorage.removeItem('adDraft');
             return;
         }
-        
+
         // Fill form with draft data
         const form = document.getElementById('adForm');
         if (form && !editingAdId) {
             document.getElementById('adTitle').value = draft.title || '';
             document.getElementById('adLocation').value = draft.location || '';
             document.getElementById('adDisplayOrder').value = draft.display_order || '';
-            document.getElementById('adIsActive').checked = draft.is_active === 'on';
+            document.getElementById('adIsActive').checked = draft.is_active;
         }
     } catch (error) {
         console.error('Error loading draft:', error);
@@ -650,7 +652,7 @@ function loadDraft() {
 function setupAutoSave() {
     const form = document.getElementById('adForm');
     if (!form) return;
-    
+
     const inputs = form.querySelectorAll('input, select, textarea');
     inputs.forEach(input => {
         input.addEventListener('input', () => {
@@ -669,58 +671,49 @@ function clearDraft() {
 window.setupDragAndDrop = setupDragAndDrop;
 window.showLoading = showLoading;
 window.showSuccessAnimation = showSuccessAnimation;
-window.confirmDelete = confirmDelete;
-window.deleteAd = deleteAd;
 window.saveDraft = saveDraft;
 window.loadDraft = loadDraft;
 window.setupAutoSave = setupAutoSave;
 window.clearDraft = clearDraft;
+
 // Image optimization and validation
 function validateImageFile(file) {
     const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
     const maxSize = 5 * 1024 * 1024; // 5MB
     const minWidth = 300;
     const minHeight = 200;
-    
+
     return new Promise((resolve, reject) => {
         // Check file type
         if (!validTypes.includes(file.type)) {
             reject(new Error('Please select a valid image file (JPEG, PNG, GIF, or WebP)'));
             return;
         }
-        
+
         // Check file size
         if (file.size > maxSize) {
             reject(new Error('Image size must be less than 5MB'));
             return;
         }
-        
+
         // Check image dimensions
         const img = new Image();
-        img.onload = function() {
+        img.onload = function () {
             if (this.width < minWidth || this.height < minHeight) {
                 reject(new Error(`Image must be at least ${minWidth}x${minHeight} pixels`));
                 return;
             }
-            
-            // Calculate aspect ratio
-            const aspectRatio = this.width / this.height;
-            if (aspectRatio < 1.5 || aspectRatio > 4) {
-                console.warn('Recommended aspect ratio is between 1.5:1 and 4:1 for best display');
-            }
-            
             resolve({
                 width: this.width,
                 height: this.height,
-                aspectRatio: aspectRatio,
                 size: file.size
             });
         };
-        
-        img.onerror = function() {
+
+        img.onerror = function () {
             reject(new Error('Invalid image file'));
         };
-        
+
         img.src = URL.createObjectURL(file);
     });
 }
@@ -729,24 +722,21 @@ function validateImageFile(file) {
 async function handleImageUploadWithValidation(event) {
     const file = event.target.files[0];
     if (!file) return;
-    
+
     try {
         const imageInfo = await validateImageFile(file);
-        
-        // Show image info
-        console.log('Image validated:', imageInfo);
-        
+
         // Show preview
         const reader = new FileReader();
-        reader.onload = function(e) {
+        reader.onload = function (e) {
             const imagePreview = document.getElementById('imagePreview');
             const imageUpload = document.getElementById('imageUpload');
             const currentImage = document.getElementById('currentImage');
-            
+
             currentImage.src = e.target.result;
             imagePreview.style.display = 'block';
             imageUpload.style.display = 'none';
-            
+
             // Add image info display
             const infoDiv = document.createElement('div');
             infoDiv.className = 'image-info';
@@ -755,15 +745,15 @@ async function handleImageUploadWithValidation(event) {
                     ${imageInfo.width}×${imageInfo.height}px • ${(file.size / 1024 / 1024).toFixed(2)}MB
                 </small>
             `;
-            
+
             // Remove existing info
             const existingInfo = imagePreview.querySelector('.image-info');
             if (existingInfo) existingInfo.remove();
-            
+
             imagePreview.appendChild(infoDiv);
         };
         reader.readAsDataURL(file);
-        
+
     } catch (error) {
         showNotification(error.message, 'error');
         event.target.value = '';
@@ -781,7 +771,11 @@ function updateImageUploadHandler() {
     }
 }
 
-// Export new functions
 window.validateImageFile = validateImageFile;
 window.handleImageUploadWithValidation = handleImageUploadWithValidation;
 window.updateImageUploadHandler = updateImageUploadHandler;
+
+// Initialize
+if (window.location.hash === '#ads' || document.getElementById('adsTableBody')) {
+    initAdsPage();
+}

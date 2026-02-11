@@ -3,13 +3,18 @@ let allCustomers = [];
 
 async function loadCustomers() {
     try {
-        // Get customers from orders (simple approach)
-        const ordersResponse = await fetch('http://localhost:3002/api/orders');
-        const orders = await ordersResponse.json();
-        
+        console.log('👥 Loading customers from Supabase orders...');
+        // Get customers from orders (simple approach) - aligned with legacy logic
+        const { data: orders, error } = await supabase
+            .from('orders')
+            .select('*')
+            .order('created_at', { ascending: false });
+
+        if (error) throw error;
+
         // Group orders by customer phone (unique identifier)
         const customerMap = new Map();
-        
+
         orders.forEach(order => {
             const key = order.customer_phone;
             if (customerMap.has(key)) {
@@ -17,8 +22,8 @@ async function loadCustomers() {
                 customer.orders.push(order);
                 customer.totalSpent += parseFloat(order.total_amount);
                 customer.totalOrders++;
-                if (new Date(order.order_date) > new Date(customer.lastOrderDate)) {
-                    customer.lastOrderDate = order.order_date;
+                if (new Date(order.created_at) > new Date(customer.lastOrderDate)) {
+                    customer.lastOrderDate = order.created_at;
                 }
             } else {
                 customerMap.set(key, {
@@ -29,36 +34,38 @@ async function loadCustomers() {
                     orders: [order],
                     totalOrders: 1,
                     totalSpent: parseFloat(order.total_amount),
-                    firstOrderDate: order.order_date,
-                    lastOrderDate: order.order_date,
+                    firstOrderDate: order.created_at,
+                    lastOrderDate: order.created_at,
                     status: parseFloat(order.total_amount) > 5000 ? 'VIP' : 'Active'
                 });
             }
         });
-        
+
         allCustomers = Array.from(customerMap.values());
-        
+        console.log(`✅ Processed ${allCustomers.length} unique customers`);
+
         renderCustomers(allCustomers);
-        
+
     } catch (error) {
         console.error('Error loading customers:', error);
-        document.getElementById('customersTableBody').innerHTML = 
+        document.getElementById('customersTableBody').innerHTML =
             '<tr><td colspan="7" style="text-align: center; padding: 40px; color: red;">Failed to load customers</td></tr>';
     }
 }
 
 function renderCustomers(customers) {
     const tbody = document.getElementById('customersTableBody');
-    
+    if (!tbody) return;
+
     if (customers.length === 0) {
         tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 40px;">No customers found</td></tr>';
         return;
     }
-    
+
     tbody.innerHTML = customers.map(customer => {
         const lastOrderDate = new Date(customer.lastOrderDate).toLocaleDateString('en-IN');
         const avatar = customer.name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
-        
+
         return `
             <tr>
                 <td>
@@ -96,7 +103,7 @@ function renderCustomers(customers) {
 
 function searchCustomers() {
     const searchTerm = document.getElementById('customerSearch').value.toLowerCase();
-    const filtered = allCustomers.filter(customer => 
+    const filtered = allCustomers.filter(customer =>
         customer.name.toLowerCase().includes(searchTerm) ||
         customer.phone.includes(searchTerm) ||
         (customer.email && customer.email.toLowerCase().includes(searchTerm))
@@ -107,11 +114,11 @@ function searchCustomers() {
 function viewCustomerDetails(phone) {
     const customer = allCustomers.find(c => c.phone === phone);
     if (!customer) return;
-    
-    const ordersList = customer.orders.map(order => 
-        `• ${order.order_id} - ₹${parseFloat(order.total_amount).toLocaleString('en-IN')} (${order.status})`
+
+    const ordersList = customer.orders.map(order =>
+        `• ${order.order_id || 'ID-N/A'} - ₹${parseFloat(order.total_amount).toLocaleString('en-IN')} (${order.status})`
     ).join('\n');
-    
+
     const details = `
 CUSTOMER DETAILS
 ================
@@ -132,7 +139,7 @@ ${customer.address}
 ORDER HISTORY:
 ${ordersList}
     `;
-    
+
     alert(details);
 }
 
@@ -159,9 +166,9 @@ function exportCustomers() {
             Export as Excel
         </div>
     `;
-    
+
     document.body.appendChild(menu);
-    
+
     // Close menu on click outside
     setTimeout(() => {
         document.addEventListener('click', function closeMenu() {
@@ -272,7 +279,7 @@ function exportCustomersToPDF() {
         </body>
         </html>
     `;
-    
+
     // Create blob and download as HTML (can be saved as PDF using browser's print to PDF)
     const blob = new Blob([content], { type: 'text/html' });
     const url = URL.createObjectURL(blob);
@@ -284,12 +291,12 @@ function exportCustomersToPDF() {
     link.click();
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
-    
+
     // Also open in new window for immediate printing
     const printWindow = window.open('', '_blank');
     printWindow.document.write(content);
     printWindow.document.close();
-    
+
     showNotification('PDF report downloaded. Use browser Print to PDF option.', 'success');
 }
 
@@ -306,13 +313,13 @@ function exportCustomersToExcel() {
         new Date(customer.firstOrderDate).toLocaleDateString('en-IN'),
         new Date(customer.lastOrderDate).toLocaleDateString('en-IN')
     ]);
-    
+
     // Convert to CSV
     const csvContent = [
         headers.join(','),
         ...rows.map(row => row.map(cell => `"${cell}"`).join(','))
     ].join('\n');
-    
+
     // Create download link
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
@@ -323,7 +330,7 @@ function exportCustomersToExcel() {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-    
+
     showNotification('Excel file downloaded successfully', 'success');
 }
 
