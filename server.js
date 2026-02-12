@@ -1,141 +1,51 @@
-const http = require('http');
-const fs = require('fs');
+const express = require('express');
 const path = require('path');
+const cors = require('cors');
 
+const app = express();
 const PORT = process.env.PORT || 3001;
 
-// MIME types for different file extensions
-const mimeTypes = {
-    '.html': 'text/html',
-    '.css': 'text/css',
-    '.js': 'application/javascript',
-    '.json': 'application/json',
-    '.png': 'image/png',
-    '.jpg': 'image/jpeg',
-    '.jpeg': 'image/jpeg',
-    '.gif': 'image/gif',
-    '.webp': 'image/webp',
-    '.svg': 'image/svg+xml',
-    '.ico': 'image/x-icon',
-    '.woff': 'font/woff',
-    '.woff2': 'font/woff2',
-    '.ttf': 'font/ttf',
-    '.otf': 'font/otf'
-};
+// Enable CORS
+app.use(cors());
 
-// Create HTTP server
-const server = http.createServer((req, res) => {
-    console.log(`${req.method} ${req.url}`);
-    
-    // Parse URL
-    let filePath = req.url;
-    
-    // Handle admin routes
-    if (filePath === '/admin' || filePath === '/admin/') {
-        filePath = '/admin-login.html';
-    } else if (filePath === '/admin-dashboard' || filePath === '/admin-dashboard/') {
-        filePath = '/admin-dashboard.html';
-    } else if (filePath === '/') {
-        filePath = '/index.html';
-    }
-    
-    // Remove query string
-    filePath = filePath.split('?')[0];
-    
-    // Security: prevent directory traversal
-    if (filePath.includes('..')) {
-        res.writeHead(403, { 'Content-Type': 'text/plain' });
-        res.end('403 Forbidden');
-        return;
-    }
-    
-    // Construct file path
-    let publicPath;
-    
-    // Handle uploads directory
-    if (filePath.startsWith('/uploads/')) {
-        publicPath = path.join(__dirname, filePath);
+// Serve static files from the 'public' directory
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Explicit Route Handlers
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
+// Admin Route - Redirects or serves login
+app.get('/admin', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'admin-login.html'));
+});
+
+// Admin Dashboard Route
+app.get('/admin-dashboard', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'admin-dashboard.html'));
+});
+
+// SPA Fallback for client-side routing (e.g. /products, /about)
+// This excludes /api routes if you had them, but for now we catch all non-file requests
+app.get(/(.*)/, (req, res) => {
+    // If the request is for a file that exists (and wasn't caught by static), let it 404 naturally? 
+    // No, express.static handles existing files first.
+    // If we are here, it means no static file was found.
+    // We should fallback to index.html for SPA routes.
+
+    // However, we should verify it's not looking for a missing asset like .css or .js
+    if (req.path.match(/\.(css|js|png|jpg|jpeg|gif|ico|svg)$/)) {
+        res.status(404).send('Not Found');
     } else {
-        publicPath = path.join(__dirname, 'public', filePath);
+        res.sendFile(path.join(__dirname, 'public', 'index.html'));
     }
-    
-    // Get file extension
-    const ext = path.extname(publicPath).toLowerCase();
-    const contentType = mimeTypes[ext] || 'application/octet-stream';
-    
-    // Read and serve file
-    fs.readFile(publicPath, (err, data) => {
-        if (err) {
-            if (err.code === 'ENOENT') {
-                // File not found - serve index.html for client-side routing
-                if (ext === '') {
-                    fs.readFile(path.join(__dirname, 'public', 'index.html'), (err, data) => {
-                        if (err) {
-                            res.writeHead(500, { 'Content-Type': 'text/plain' });
-                            res.end('500 Internal Server Error');
-                        } else {
-                            res.writeHead(200, { 'Content-Type': 'text/html' });
-                            res.end(data);
-                        }
-                    });
-                } else {
-                    res.writeHead(404, { 'Content-Type': 'text/plain' });
-                    res.end('404 Not Found');
-                }
-            } else {
-                res.writeHead(500, { 'Content-Type': 'text/plain' });
-                res.end('500 Internal Server Error');
-            }
-            return;
-        }
-        
-        // Serve file
-        res.writeHead(200, { 
-            'Content-Type': contentType,
-            'Cache-Control': 'no-cache, no-store, must-revalidate'
-        });
-        res.end(data);
-    });
 });
 
 // Start server
-server.listen(PORT, () => {
-    console.log('═══════════════════════════════════════════════════════');
-    console.log('  Virgin 5.0 - Luxury Ayurvedic Skincare');
-    console.log('═══════════════════════════════════════════════════════');
-    console.log(`  🚀 Server running at: http://localhost:${PORT}`);
-    console.log(`  📁 Serving files from: ${path.join(__dirname, 'public')}`);
-    console.log('═══════════════════════════════════════════════════════');
-    console.log('  Press Ctrl+C to stop the server');
-    console.log('═══════════════════════════════════════════════════════\n');
+app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+    console.log(`Serving static files from ${path.join(__dirname, 'public')}`);
 });
 
-// Handle server errors
-server.on('error', (err) => {
-    if (err.code === 'EADDRINUSE') {
-        console.error(`❌ Port ${PORT} is already in use.`);
-        console.error('   Please try a different port or stop the other service.');
-        process.exit(1);
-    } else {
-        console.error('❌ Server error:', err);
-        process.exit(1);
-    }
-});
-
-// Graceful shutdown
-process.on('SIGTERM', () => {
-    console.log('\n📴 SIGTERM signal received: closing HTTP server');
-    server.close(() => {
-        console.log('✅ HTTP server closed');
-        process.exit(0);
-    });
-});
-
-process.on('SIGINT', () => {
-    console.log('\n📴 SIGINT signal received: closing HTTP server');
-    server.close(() => {
-        console.log('✅ HTTP server closed');
-        console.log('👋 Goodbye!');
-        process.exit(0);
-    });
-});
+module.exports = app;
