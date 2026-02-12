@@ -1,21 +1,17 @@
+// Page Route Mapping
+const routes = {
+    '/': 'hero-page',
+    '/products': 'products-page',
+    '/about': 'about-page',
+    '/contact': 'contact-page'
+};
+
 // Page Navigation
 const pages = document.querySelectorAll('.page');
 const navLinks = document.querySelectorAll('.nav a');
 
-// Save current page to localStorage
-function saveCurrentPage(pageId) {
-    localStorage.setItem('currentPage', pageId);
-}
-
-// Load saved page on refresh
-function loadSavedPage() {
-    const savedPage = localStorage.getItem('currentPage');
-    if (savedPage) {
-        navigateToPage(savedPage);
-    }
-}
-
-function navigateToPage(pageId) {
+// Navigate to page and update URL
+function navigateToPage(pageId, updateUrl = true) {
     // Hide all pages
     pages.forEach(page => page.classList.remove('active'));
 
@@ -23,7 +19,14 @@ function navigateToPage(pageId) {
     const targetPage = document.getElementById(pageId);
     if (targetPage) {
         targetPage.classList.add('active');
-        saveCurrentPage(pageId);
+
+        // Update URL if requested
+        if (updateUrl) {
+            const route = Object.keys(routes).find(key => routes[key] === pageId);
+            if (route) {
+                history.pushState({ pageId }, '', route);
+            }
+        }
     }
 
     // Show/hide ad banners based on page
@@ -47,8 +50,25 @@ function navigateToPage(pageId) {
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-// Load saved page on page load
-window.addEventListener('load', loadSavedPage);
+// Handle browser Back/Forward buttons
+window.addEventListener('popstate', (event) => {
+    if (event.state && event.state.pageId) {
+        navigateToPage(event.state.pageId, false);
+    } else {
+        // Handle initial load or external navigation
+        handleInitialLoad();
+    }
+});
+
+// Handle initial page load based on URL
+function handleInitialLoad() {
+    const path = window.location.pathname;
+    const pageId = routes[path] || 'hero-page'; // Default to home
+    navigateToPage(pageId, false);
+}
+
+// Initialize on load
+window.addEventListener('load', handleInitialLoad);
 
 // Add click listeners to all navigation links
 navLinks.forEach(link => {

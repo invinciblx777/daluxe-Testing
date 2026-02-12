@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     // Check if already logged in via Supabase
     const { data: { session } } = await supabase.auth.getSession();
     if (session) {
-        window.location.href = '/admin-dashboard.html';
+        window.location.href = '/admin-dashboard';
         return;
     }
 
@@ -56,7 +56,7 @@ document.addEventListener('DOMContentLoaded', async function () {
             showSuccess('✓ Login successful! Redirecting...');
 
             setTimeout(() => {
-                window.location.href = '/admin-dashboard.html';
+                window.location.href = '/admin-dashboard';
             }, 1000);
 
         } catch (err) {

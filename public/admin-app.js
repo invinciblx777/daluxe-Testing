@@ -8,7 +8,7 @@
         if (sessionStorage.getItem('adminLoggedIn') !== 'true') {
             // If no supabase session and no legacy flag, redirect
             // Using admin-login.html as that is the file name
-            window.location.href = 'admin-login.html';
+            window.location.href = '/admin';
         } else {
             // If legacy flag exists but no Supabase session (edge case), 
             // maybe we should clear it or trust it? 
