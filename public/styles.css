@@ -155,16 +155,24 @@ body {
     justify-content: center;
     padding: 120px 50px 80px;
     overflow: hidden;
-    background-image: url('hero-bg.png');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
+    /* Background moved to .hero-background for animation */
 }
 
 .hero-background {
     position: absolute;
     inset: 0;
-    background: transparent;
+    background-image: url('hero-bg.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    z-index: 0;
+    animation: pulseBackground 5s ease-in-out infinite;
+}
+
+@keyframes pulseBackground {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
 }
 
 .gradient-overlay {
