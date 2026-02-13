@@ -96,35 +96,91 @@ document.addEventListener('DOMContentLoaded', function () {
 
 // Mobile Navigation Functionality
 function initMobileNavigation() {
-    // Get all mobile navigation toggles and navs
-    const mobileNavToggles = document.querySelectorAll('[id^="mobileNavToggle"]');
-    const mobileNavs = document.querySelectorAll('.nav');
-    const mobileNavOverlays = document.querySelectorAll('[id^="mobileNavOverlay"]');
-    const navLinks = document.querySelectorAll('.nav a');
+    // Add event listeners to all mobile nav toggles within their respective headers
+    const headers = document.querySelectorAll('.header');
 
-    // Add event listeners to all mobile nav toggles
-    mobileNavToggles.forEach((toggle, index) => {
+    headers.forEach(header => {
+        const toggle = header.querySelector('.mobile-nav-toggle');
+        const nav = header.querySelector('.nav');
+        // Find the overlay that corresponds to this page section - assuming structure is consistent
+        // Or look for overlay in the same page container
+        const pageContainer = header.closest('.page-container');
+        const overlay = pageContainer ? pageContainer.querySelector('.mobile-nav-overlay') : null;
+
         if (toggle) {
-            toggle.addEventListener('click', function () {
-                toggleMobileNav(index + 1);
+            toggle.addEventListener('click', function (e) {
+                e.stopPropagation(); // Prevent bubbling issues
+
+                // Toggle active class on nav
+                if (nav) {
+                    nav.classList.toggle('active');
+                    const isActive = nav.classList.contains('active');
+
+                    // Toggle overlay
+                    if (overlay) {
+                        overlay.style.display = isActive ? 'block' : 'none';
+                    }
+
+                    // Update toggle icon
+                    if (isActive) {
+                        toggle.innerHTML = `
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="18" y1="6" x2="6" y2="18"></line>
+                                <line x1="6" y1="6" x2="18" y2="18"></line>
+                            </svg>
+                        `;
+                        document.body.style.overflow = 'hidden';
+                    } else {
+                        toggle.innerHTML = `
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="3" y1="6" x2="21" y2="6"></line>
+                                <line x1="3" y1="12" x2="21" y2="12"></line>
+                                <line x1="3" y1="18" x2="21" y2="18"></line>
+                            </svg>
+                        `;
+                        document.body.style.overflow = '';
+                    }
+                }
             });
         }
-    });
 
-    // Close mobile nav when overlay is clicked
-    mobileNavOverlays.forEach((overlay, index) => {
+        // Close when overlay is clicked
         if (overlay) {
             overlay.addEventListener('click', function () {
-                closeMobileNav(index + 1);
+                if (nav) nav.classList.remove('active');
+                overlay.style.display = 'none';
+                if (toggle) {
+                    toggle.innerHTML = `
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="3" y1="6" x2="21" y2="6"></line>
+                            <line x1="3" y1="12" x2="21" y2="12"></line>
+                            <line x1="3" y1="18" x2="21" y2="18"></line>
+                        </svg>
+                    `;
+                }
+                document.body.style.overflow = '';
             });
         }
-    });
 
-    // Close mobile nav when a link is clicked
-    navLinks.forEach(link => {
-        link.addEventListener('click', function () {
-            closeAllMobileNavs();
-        });
+        // Close when a link inside nav is clicked
+        if (nav) {
+            nav.querySelectorAll('a').forEach(link => {
+                link.addEventListener('click', function () {
+                    nav.classList.remove('active');
+                    if (overlay) overlay.style.display = 'none';
+                    if (toggle) {
+                        toggle.innerHTML = `
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="3" y1="6" x2="21" y2="6"></line>
+                                <line x1="3" y1="12" x2="21" y2="12"></line>
+                                <line x1="3" y1="18" x2="21" y2="18"></line>
+                            </svg>
+                        `;
+                    }
+                    document.body.style.overflow = '';
+                });
+            });
+        }
     });
 
     // Close mobile nav on escape key
@@ -142,84 +198,29 @@ function initMobileNavigation() {
     });
 }
 
-function toggleMobileNav(pageIndex = 1) {
-    const mobileNavId = pageIndex === 1 ? 'mobileNav' : `mobileNav${pageIndex}`;
-    const mobileNav = document.getElementById(mobileNavId) || document.querySelector('.nav');
+function closeAllMobileNavs() {
+    document.querySelectorAll('.header').forEach(header => {
+        const nav = header.querySelector('.nav');
+        const toggle = header.querySelector('.mobile-nav-toggle');
+        const pageContainer = header.closest('.page-container');
+        const overlay = pageContainer ? pageContainer.querySelector('.mobile-nav-overlay') : null;
 
-    if (mobileNav && mobileNav.classList.contains('active')) {
-        closeMobileNav(pageIndex);
-    } else {
-        openMobileNav(pageIndex);
-    }
-}
-
-function openMobileNav(pageIndex = 1) {
-    const mobileNavToggleId = pageIndex === 1 ? 'mobileNavToggle' : `mobileNavToggle${pageIndex}`;
-    const mobileNavOverlayId = pageIndex === 1 ? 'mobileNavOverlay' : `mobileNavOverlay${pageIndex}`;
-
-    const mobileNav = document.querySelector('.page.active .nav');
-    const mobileNavOverlay = document.getElementById(mobileNavOverlayId);
-    const mobileNavToggle = document.getElementById(mobileNavToggleId);
-
-    if (mobileNav) {
-        mobileNav.classList.add('active');
-    }
-
-    if (mobileNavOverlay) {
-        mobileNavOverlay.style.display = 'block';
-    }
-
-    if (mobileNavToggle) {
-        // Change hamburger to X
-        mobileNavToggle.innerHTML = `
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <line x1="18" y1="6" x2="6" y2="18"></line>
-                <line x1="6" y1="6" x2="18" y2="18"></line>
-            </svg>
-        `;
-    }
-
-    // Prevent body scroll
-    document.body.style.overflow = 'hidden';
-}
-
-function closeMobileNav(pageIndex = 1) {
-    const mobileNavToggleId = pageIndex === 1 ? 'mobileNavToggle' : `mobileNavToggle${pageIndex}`;
-    const mobileNavOverlayId = pageIndex === 1 ? 'mobileNavOverlay' : `mobileNavOverlay${pageIndex}`;
-
-    const mobileNav = document.querySelector('.page.active .nav');
-    const mobileNavOverlay = document.getElementById(mobileNavOverlayId);
-    const mobileNavToggle = document.getElementById(mobileNavToggleId);
-
-    if (mobileNav) {
-        mobileNav.classList.remove('active');
-    }
-
-    if (mobileNavOverlay) {
-        mobileNavOverlay.style.display = 'none';
-    }
-
-    if (mobileNavToggle) {
-        // Change X back to hamburger
-        mobileNavToggle.innerHTML = `
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <line x1="3" y1="6" x2="21" y2="6"></line>
-                <line x1="3" y1="12" x2="21" y2="12"></line>
-                <line x1="3" y1="18" x2="21" y2="18"></line>
-            </svg>
-        `;
-    }
-
-    // Restore body scroll
+        if (nav) nav.classList.remove('active');
+        if (overlay) overlay.style.display = 'none';
+        if (toggle) {
+            toggle.innerHTML = `
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
+            `;
+        }
+    });
     document.body.style.overflow = '';
 }
 
-function closeAllMobileNavs() {
-    // Close all mobile navs
-    for (let i = 1; i <= 4; i++) {
-        closeMobileNav(i);
-    }
-}
+
 
 // Modal Management
 const productModal = document.getElementById('product-modal');
