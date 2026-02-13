@@ -363,13 +363,14 @@ async function setupFilters() {
         filterTabs.innerHTML = '';
 
         // Add "All Products" button
-        const allBtn = document.createElement('button');
-        allBtn.className = 'filter-btn active';
-        allBtn.textContent = 'All Products';
-        allBtn.addEventListener('click', function () {
-            filterProducts('All Products');
-        });
-        filterTabs.appendChild(allBtn);
+        // Add "All Products" button - REMOVED as per user request
+        // const allBtn = document.createElement('button');
+        // allBtn.className = 'filter-btn active';
+        // allBtn.textContent = 'All Products';
+        // allBtn.addEventListener('click', function () {
+        //     filterProducts('All Products');
+        // });
+        // filterTabs.appendChild(allBtn);
 
         // Add category buttons
         categories.forEach(category => {
@@ -388,13 +389,13 @@ async function setupFilters() {
 
         filterTabs.innerHTML = '';
 
-        const allBtn = document.createElement('button');
-        allBtn.className = 'filter-btn active';
-        allBtn.textContent = 'All Products';
-        allBtn.addEventListener('click', function () {
-            filterProducts('All Products');
-        });
-        filterTabs.appendChild(allBtn);
+        // const allBtn = document.createElement('button');
+        // allBtn.className = 'filter-btn active';
+        // allBtn.textContent = 'All Products';
+        // allBtn.addEventListener('click', function () {
+        //     filterProducts('All Products');
+        // });
+        // filterTabs.appendChild(allBtn);
 
         defaultCategories.forEach(category => {
             const btn = document.createElement('button');
