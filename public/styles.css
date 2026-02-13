@@ -161,18 +161,33 @@ body {
 .hero-background {
     position: absolute;
     inset: 0;
-    background-image: url('hero-bg.png');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
     z-index: 0;
-    animation: pulseBackground 5s ease-in-out infinite;
+    overflow: hidden;
 }
 
+/* WebGL shader canvas — fills the hero-background container */
+#shader-canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+/* Fallback pulse animation if WebGL is not supported */
 @keyframes pulseBackground {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.05); }
-    100% { transform: scale(1); }
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.05);
+    }
+
+    100% {
+        transform: scale(1);
+    }
 }
 
 .gradient-overlay {
@@ -275,9 +290,12 @@ body {
 }
 
 @keyframes float {
-    0%, 100% {
+
+    0%,
+    100% {
         transform: translateY(0) rotate(340deg);
     }
+
     50% {
         transform: translateY(-20px) rotate(340deg);
     }
@@ -315,10 +333,12 @@ body {
         top: -100px;
         transform: translateX(-50%) rotate(0deg);
     }
+
     50% {
         top: -10px;
         transform: translateX(-50%) rotate(180deg);
     }
+
     100% {
         top: -100px;
         transform: translateX(-50%) rotate(360deg);
@@ -808,7 +828,7 @@ body {
     z-index: 0;
 }
 
-.promise-section > * {
+.promise-section>* {
     position: relative;
     z-index: 1;
 }
@@ -884,9 +904,12 @@ body {
 }
 
 @keyframes float {
-    0%, 100% {
+
+    0%,
+    100% {
         transform: translateY(0);
     }
+
     50% {
         transform: translateY(-8px);
     }
@@ -1281,16 +1304,16 @@ body {
     .features-grid {
         grid-template-columns: repeat(2, 1fr);
     }
-    
+
     .nav {
         gap: 40px;
         padding: 15px 40px;
     }
-    
+
     .products-section {
         padding: 20px 100px;
     }
-    
+
     .footer-links {
         grid-template-columns: 2fr 1fr 1fr;
     }
@@ -1301,11 +1324,11 @@ body {
         padding: 15px 20px !important;
         position: fixed !important;
     }
-    
+
     .mobile-nav-toggle {
         display: block !important;
     }
-    
+
     .nav {
         display: none !important;
         position: fixed !important;
@@ -1325,11 +1348,11 @@ body {
         border-radius: 0 !important;
         border: none !important;
     }
-    
+
     .nav.active {
         display: flex !important;
     }
-    
+
     .nav a {
         font-size: 28px !important;
         font-weight: 400 !important;
@@ -1338,7 +1361,7 @@ body {
         width: 100% !important;
         text-align: center !important;
     }
-    
+
     .mobile-nav-overlay {
         display: block;
         position: fixed;
@@ -1350,50 +1373,50 @@ body {
         z-index: 99;
         display: none;
     }
-    
+
     .hero-title {
         font-size: 48px;
     }
-    
+
     .features-grid {
         grid-template-columns: 1fr;
     }
-    
+
     .products-grid {
         flex-direction: column;
         align-items: center;
     }
-    
+
     .stats-grid {
         grid-template-columns: 1fr;
     }
-    
+
     .product-detail {
         width: 95vw;
         padding: 20px;
     }
-    
+
     .product-detail-grid {
         grid-template-columns: 1fr;
         gap: 20px;
     }
-    
+
     .cart-content {
         width: 95vw;
         padding: 20px;
     }
-    
+
     .cart-item {
         grid-template-columns: 60px 1fr auto;
         gap: 10px;
     }
-    
+
     .cart-item-quantity {
         grid-column: 1 / -1;
         justify-self: center;
         margin-top: 10px;
     }
-    
+
     .footer-links {
         grid-template-columns: 1fr;
         gap: 30px;
@@ -1773,8 +1796,15 @@ body {
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 /* Secure Payment */
@@ -1987,7 +2017,7 @@ body {
     display: none;
 }
 
-.payment-option input[type="radio"]:checked + .payment-card {
+.payment-option input[type="radio"]:checked+.payment-card {
     border-color: #d4a574;
     background: rgba(212, 165, 116, 0.1);
 }
@@ -2349,35 +2379,35 @@ body {
         padding: 20px;
         max-height: 95vh;
     }
-    
+
     .checkout-progress {
         flex-wrap: wrap;
         gap: 10px;
     }
-    
+
     .progress-line {
         display: none;
     }
-    
+
     .form-row {
         grid-template-columns: 1fr;
     }
-    
+
     .cart-item {
         grid-template-columns: 60px 1fr auto;
         gap: 10px;
     }
-    
+
     .cart-item-quantity {
         grid-column: 1 / -1;
         justify-self: center;
         margin-top: 10px;
     }
-    
+
     .step-buttons {
         flex-direction: column;
     }
-    
+
     .confirmation-actions {
         flex-direction: column;
     }
@@ -2415,6 +2445,7 @@ body {
         transform: translateX(400px);
         opacity: 0;
     }
+
     to {
         transform: translateX(0);
         opacity: 1;
@@ -2426,6 +2457,7 @@ body {
         transform: translateX(0);
         opacity: 1;
     }
+
     to {
         transform: translateX(400px);
         opacity: 0;
@@ -2608,6 +2640,7 @@ body {
     font-size: 18px !important;
     font-weight: 600 !important;
 }
+
 /* Cart Offer Styles */
 .cart-offer-info {
     font-size: 12px;
@@ -2631,6 +2664,7 @@ body {
     text-align: right;
     min-width: 80px;
 }
+
 /* Product Detail Modal Enhancements */
 .modal.active {
     display: flex !important;
@@ -2932,6 +2966,7 @@ body {
 .contact-submit-btn:active {
     transform: translateY(0);
 }
+
 /* Clean Ad Banner Carousel - True Full Width */
 .ad-banners-section {
     width: 100vw;
@@ -3078,35 +3113,35 @@ body {
         margin: 40px 0;
         padding: 0;
     }
-    
+
     .ad-banner-carousel {
         height: 350px;
         border-radius: 0;
     }
-    
+
     .carousel-nav {
         width: 40px;
         height: 40px;
     }
-    
+
     .carousel-nav.prev {
         left: 15px;
     }
-    
+
     .carousel-nav.next {
         right: 15px;
     }
-    
+
     .carousel-nav svg {
         width: 20px;
         height: 20px;
     }
-    
+
     .carousel-indicators {
         bottom: 15px;
         gap: 8px;
     }
-    
+
     .carousel-indicator {
         width: 10px;
         height: 10px;
@@ -3118,12 +3153,12 @@ body {
         height: 280px;
         border-radius: 0;
     }
-    
+
     .carousel-nav {
         width: 36px;
         height: 36px;
     }
-    
+
     .carousel-nav svg {
         width: 18px;
         height: 18px;
@@ -3144,6 +3179,7 @@ body {
 
 /* Reduced Motion */
 @media (prefers-reduced-motion: reduce) {
+
     .carousel-track,
     .carousel-nav,
     .carousel-indicator {
@@ -3156,24 +3192,24 @@ body {
     .ad-banner-carousel {
         background-color: #000000;
     }
-    
+
     .carousel-nav {
         background: rgba(31, 41, 55, 0.9);
         color: #f9fafb;
     }
-    
+
     .carousel-nav:hover {
         background: rgba(31, 41, 55, 1);
     }
-    
+
     .carousel-nav svg {
         color: #f9fafb;
     }
-    
+
     .carousel-indicator {
         background: rgba(31, 41, 55, 0.5);
     }
-    
+
     .carousel-indicator.active {
         background: rgba(31, 41, 55, 0.9);
     }
@@ -3190,6 +3226,7 @@ body {
     0% {
         background-position: 200% 0;
     }
+
     100% {
         background-position: -200% 0;
     }
@@ -3218,6 +3255,7 @@ body {
         opacity: 0;
         transform: translateY(30px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -3229,11 +3267,11 @@ body {
 }
 
 /* Enhanced Hero Section Integration */
-.hero-section + .ad-banners-section {
+.hero-section+.ad-banners-section {
     margin-top: 80px;
 }
 
-.ad-banners-section + .products-section {
+.ad-banners-section+.products-section {
     margin-top: 80px;
 }
 
@@ -3291,14 +3329,14 @@ body {
 
 /* Neon Glow Effect */
 .ad-banner.neon {
-    box-shadow: 
+    box-shadow:
         0 0 20px rgba(59, 130, 246, 0.3),
         0 0 40px rgba(59, 130, 246, 0.2),
         0 0 60px rgba(59, 130, 246, 0.1);
 }
 
 .ad-banner.neon:hover {
-    box-shadow: 
+    box-shadow:
         0 0 30px rgba(59, 130, 246, 0.5),
         0 0 60px rgba(59, 130, 246, 0.3),
         0 0 90px rgba(59, 130, 246, 0.2);
@@ -3903,27 +3941,27 @@ body {
         grid-template-columns: 1fr;
         gap: 16px;
     }
-    
+
     .search-filter-group {
         flex-direction: column;
         align-items: stretch;
     }
-    
+
     .search-input,
     .filter-select {
         min-width: auto;
     }
-    
+
     .form-row {
         grid-template-columns: 1fr;
         gap: 16px;
     }
-    
+
     .modal-content {
         width: 95%;
         margin: 20px;
     }
-    
+
     .modal-header,
     .modal-body,
     .modal-footer {
@@ -3931,6 +3969,7 @@ body {
         padding-right: 20px;
     }
 }
+
 /* Simple Visual Effects */
 .ad-banner.loaded {
     opacity: 1;
@@ -3942,7 +3981,7 @@ body {
         height: 250px;
         border-radius: 0;
     }
-    
+
     .ad-banners-section {
         padding: 0;
     }
@@ -3978,12 +4017,14 @@ body {
 
 /* Reduced Motion */
 @media (prefers-reduced-motion: reduce) {
+
     .carousel-track,
     .carousel-nav,
     .carousel-indicator {
         transition: none !important;
     }
 }
+
 /* Enhanced Coupon Section Styling */
 .coupon-section {
     background: linear-gradient(135deg, rgba(212, 165, 116, 0.05) 0%, rgba(230, 201, 168, 0.02) 100%);
@@ -4106,6 +4147,7 @@ body {
         opacity: 0;
         transform: translateY(-10px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -4160,9 +4202,19 @@ body {
 }
 
 @keyframes successPulse {
-    0% { transform: scale(0.95); opacity: 0; }
-    50% { transform: scale(1.02); }
-    100% { transform: scale(1); opacity: 1; }
+    0% {
+        transform: scale(0.95);
+        opacity: 0;
+    }
+
+    50% {
+        transform: scale(1.02);
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
 }
 
 .applied-coupon-info {
@@ -4262,17 +4314,17 @@ body {
         flex-direction: column;
         gap: 8px;
     }
-    
+
     .coupon-apply-btn {
         width: 100%;
     }
-    
+
     .applied-coupon-display {
         flex-direction: column;
         gap: 12px;
         text-align: center;
     }
-    
+
     .coupon-section {
         padding: 16px;
     }
@@ -4295,12 +4347,17 @@ body {
 }
 
 @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
 }
 
 /* Force reduce gap above Best Sellers */
-.features-section + .products-section {
+.features-section+.products-section {
     margin-top: -60px !important;
     padding-top: 10px !important;
 }
@@ -4335,9 +4392,11 @@ body {
 .products-section .section-header {
     transform: translateY(-15px) !important;
 }
+
 /* DESKTOP LAYOUT PROTECTION - Ensure desktop design is preserved */
 /* Updated: 2026-01-19 - Cache refresh */
 @media (min-width: 1025px) {
+
     /* Force desktop header layout */
     .header {
         position: fixed !important;
@@ -4352,7 +4411,7 @@ body {
         background-color: rgba(0, 0, 0, 0.9) !important;
         backdrop-filter: blur(10px) !important;
     }
-    
+
     /* Force desktop navigation */
     .nav {
         position: absolute !important;
@@ -4366,27 +4425,27 @@ body {
         border-radius: 30px !important;
         padding: 18px 60px !important;
     }
-    
+
     /* Hide mobile elements on desktop */
     .mobile-nav-toggle {
         display: none !important;
     }
-    
+
     .mobile-nav-overlay {
         display: none !important;
     }
-    
+
     /* Ensure products section spacing on desktop */
     .products-section {
         padding: 0px 278px 100px !important;
     }
-    
+
     /* Ensure features grid on desktop */
     .features-grid {
         grid-template-columns: repeat(4, 1fr) !important;
         gap: 39px !important;
     }
-    
+
     /* Ensure footer layout on desktop */
     .footer-links {
         grid-template-columns: 2fr 1fr 1fr 1fr !important;
